@@ -7,5 +7,5 @@ using UnityEngine;
 public class CharacterBaseStats
 {
     [field: SerializeField][field: Range(0, 25f)] public float MovementSpeed { get; private set; } = 2f;
-    [field: SerializeField][field: Range(0, 25f)] public float jumpForce { get; private set; } = 5f;
+    [field: SerializeField][field: Range(0, 25f)] public float jumpForce { get; private set; } = 6f;
 }
