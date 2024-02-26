@@ -75,8 +75,13 @@ public class PlayerBaseState : IState
 
         // 좌/우 이동 - movementDirection , 상/하(점프, 중력) - ForceReceiver.Movement
         Vector3 finalMovement = movementDirection * movementSpeed + player.ForceReceiver.Movement;
-        controller.Move(finalMovement * Time.deltaTime); // 움직임 지정
 
+        // Z 축으로 이동할 때 0.0000007213769 ~ -0.0000008539862 오차 발견
+        // 특정 수보다 작으면 그냥 0으로 처리
+        if (Mathf.Abs(finalMovement.x) < 1e-6f) // 1e-6f = 0.000001
+            finalMovement.x = 0;
+
+        controller.Move(finalMovement * Time.deltaTime); // 움직임 지정
     }
 
     private void LookRotation(Vector3 movementDirection)
@@ -86,7 +91,7 @@ public class PlayerBaseState : IState
         Vector3 direction = cameraTransform.position - player.transform.position;
         direction.y = 0; // 수평만 바라보게 하기 위해서
 
-        // 캐릭터가 해당 방향을 바라보도록 회전
+        // 캐릭터가 카메라 방향을 바라보도록 회전
         Quaternion lookRotation = Quaternion.LookRotation(direction);
         player.transform.rotation = lookRotation;
 
