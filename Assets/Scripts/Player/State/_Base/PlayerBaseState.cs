@@ -60,30 +60,47 @@ public class PlayerBaseState : IState
 
     private void Move()
     {
-        Vector2 movementDirection = GetMovementDirection();
+        Vector3 movementDirection = GetMovementDirection();
 
         Move(movementDirection);
         LookRotation(movementDirection);
     }
 
-    private void Move(Vector2 movementDirection)
+    private void Move(Vector3 movementDirection)
     {
         float movementSpeed = player.GetMoveSpeed;
 
-        controller.Move(
-            ((movementDirection * movementSpeed ) // x축 이동
-            + (stateMachine.Player.ForceReceiver.Movement))// Y축 점프 넣어야 점프 제대로 될듯
-            * Time.deltaTime);
+        Vector3 cameraRight = Camera.main.transform.right;
+        movementDirection = cameraRight * movementDirection.x; // 카메라 기준으로 이동 방향을 설정
+
+        // 좌/우 이동 - movementDirection , 상/하(점프, 중력) - ForceReceiver.Movement
+        Vector3 finalMovement = movementDirection * movementSpeed + player.ForceReceiver.Movement;
+        controller.Move(finalMovement * Time.deltaTime); // 움직임 지정
+
     }
 
-    private void LookRotation(Vector2 movementDirection)
+    private void LookRotation(Vector3 movementDirection)
     {
-        Quaternion rot = stateMachine.Player.transform.rotation; // 캐릭터가 바라보는 방향 수정 flipX는 콜라이더는 반전이 안되던걸로 기억나서 부모 오브젝트의 rot 값을 건드림
-        if (movementDirection.x > 0)
-            rot.y = 0;
-        else if (movementDirection.x < 0)
-            rot.y = 180f;
-        stateMachine.Player.transform.rotation = rot;
+        Transform cameraTransform = Camera.main.transform;
+        // 카메라의 위치를 기준으로 캐릭터가 바라볼 방향 계산
+        Vector3 direction = cameraTransform.position - player.transform.position;
+        direction.y = 0; // 수평만 바라보게 하기 위해서
+
+        // 캐릭터가 해당 방향을 바라보도록 회전
+        Quaternion lookRotation = Quaternion.LookRotation(direction);
+        player.transform.rotation = lookRotation;
+
+        // 캐릭터의 좌/우 바라보는 방향 설정
+        if (movementDirection.x < 0) // 움직임이 없을떄는 그냥 냅두기 위해서 0인 경우는 처리하지 않음.
+        {
+            // 좌측으로 이동하고 있는 경우
+            player.transform.localScale = new Vector3(1, 1, 1);
+        }
+        else if (movementDirection.x > 0)
+        {
+            // 우측으로 이동하고 있는 경우
+            player.transform.localScale = new Vector3(-1, 1, 1);
+        }
     }
 
     private void ReadMovementInput() // PlayerInput.Move 에 있는 값을 읽어옴

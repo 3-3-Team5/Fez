@@ -15,7 +15,7 @@ public class PlayerMoveState : PlayerGroundState
 
     public override void Update()
     {
-        if (stateMachine.MovementInput.x == 0)
+        if (stateMachine.MovementInput.x == 0) // 움직임이 멈췄을 경우에 idle로 전환
         {
             stateMachine.ChangeState(stateMachine.IdleState);
             return;

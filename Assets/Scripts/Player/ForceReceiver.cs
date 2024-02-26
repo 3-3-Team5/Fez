@@ -8,7 +8,7 @@ public class ForceReceiver : MonoBehaviour
 
     public float verticalVelocity;
 
-    public Vector2 Movement => Vector2.up * verticalVelocity;
+    public Vector3 Movement => Vector3.up * verticalVelocity;
 
     private void Awake()
     {
