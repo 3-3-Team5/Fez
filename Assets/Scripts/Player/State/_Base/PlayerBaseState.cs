@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,9 +11,16 @@ public class PlayerBaseState : IState
 
     protected Player player;
     protected PlayerInput input;
+    protected PlayerSliding playerSliding;
     protected PlayerAnimationData animData;
     protected CharacterController controller;
     protected ForceReceiver forceReceiver;
+
+    private bool isSliding = false;
+    private float slideTime = 2f; // ë¯¸ë„ëŸ¬ì§€ëŠ” ë™ì‘ ì§€ì† ì‹œê°„
+    private float slideTimer = 0f;
+    protected float slidingSpeed = 2f;
+    private Vector2 slideDir = Vector2.zero;
 
     public PlayerBaseState(PlayerStateMachine playerStateMachine)
     {
@@ -22,16 +30,16 @@ public class PlayerBaseState : IState
         animData = stateMachine.Player.AnimationData;
         controller = stateMachine.Player.Controller;
         forceReceiver = stateMachine.Player.ForceReceiver;
-
     }
+
     public virtual void Enter()
     {
-        AddInputActionsCallbacks(); // ÀÎÇ² Ã³¸®¸¦ À§ÇÑ ÀÌº¥Æ® Ãß°¡
+        AddInputActionsCallbacks(); // ï¿½ï¿½Ç² Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½ß°ï¿½
     }
 
     public virtual void Exit()
     {
-        RemoveInputActionsCallbacks(); // »óÅÂ°¡ º¯°æµÇ´Ï ÇöÀç µî·ÏµÇ¾î ÀÖ´Â »óÅÂÀÇ ÀÌº¥Æ® Á¦°Å
+        RemoveInputActionsCallbacks(); // ï¿½ï¿½ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ÏµÇ¾ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½
     }
 
     public virtual void HandleInput()
@@ -41,18 +49,19 @@ public class PlayerBaseState : IState
 
     public virtual void PhysicsUpdate()
     {
-
     }
 
     public virtual void Update()
     {
         Move();
+        Slide();
     }
 
     protected virtual void AddInputActionsCallbacks()
     {
         input.PlayerActions.Jump.started += OnJumpStarted;
     }
+
     protected virtual void RemoveInputActionsCallbacks()
     {
         input.PlayerActions.Jump.started -= OnJumpStarted;
@@ -61,7 +70,13 @@ public class PlayerBaseState : IState
     private void Move()
     {
         Vector3 movementDirection = GetMovementDirection();
-
+        
+        if (movementDirection != Vector3.zero)
+        {
+            Debug.Log($"MovementDirection {movementDirection}");
+            slideDir = movementDirection;
+            //Debug.Log($"slideDir {slideDir}");
+        }
         Move(movementDirection);
         LookRotation(movementDirection);
     }
@@ -71,44 +86,75 @@ public class PlayerBaseState : IState
         float movementSpeed = player.GetMoveSpeed;
 
         Vector3 cameraRight = Camera.main.transform.right;
-        movementDirection = cameraRight * movementDirection.x; // Ä«¸Ş¶ó ±âÁØÀ¸·Î ÀÌµ¿ ¹æÇâÀ» ¼³Á¤
+        movementDirection = cameraRight * movementDirection.x; // Ä«ï¿½Ş¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-        // ÁÂ/¿ì ÀÌµ¿ - movementDirection , »ó/ÇÏ(Á¡ÇÁ, Áß·Â) - ForceReceiver.Movement
+        // ï¿½ï¿½/ï¿½ï¿½ ï¿½Ìµï¿½ - movementDirection , ï¿½ï¿½/ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½, ï¿½ß·ï¿½) - ForceReceiver.Movement
         Vector3 finalMovement = movementDirection * movementSpeed + player.ForceReceiver.Movement;
 
-        // Z ÃàÀ¸·Î ÀÌµ¿ÇÒ ¶§ 0.0000007213769 ~ -0.0000008539862 ¿ÀÂ÷ ¹ß°ß
-        // Æ¯Á¤ ¼öº¸´Ù ÀÛÀ¸¸é ±×³É 0À¸·Î Ã³¸®
-        if (Mathf.Abs(finalMovement.x) < 1e-6f) // 1e-6f = 0.000001
-            finalMovement.x = 0;
+        // Z ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ 0.0000007213769 ~ -0.0000008539862 ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
+        // Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×³ï¿½ 0ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 
-        controller.Move(finalMovement * Time.deltaTime); // ¿òÁ÷ÀÓ ÁöÁ¤
+        if (player.isslipped && Mathf.Approximately(finalMovement.magnitude, 0f)) // ì´ë™ì´ ì¢…ë£Œë˜ê³ , ë¯¸ë„ëŸ¬ìš´ ìƒíƒœë¼ë©´
+        {
+            isSliding = true;
+            slideTimer = 0f; // ë¯¸ë„ëŸ¬ì§€ëŠ” ë™ì‘ ì‹œê°„ ì´ˆê¸°í™”
+        }
+        
+        if (isSliding)
+        {
+            slideTimer += Time.deltaTime; // ë¯¸ë„ëŸ¬ì§€ëŠ” ë™ì‘ ì‹œê°„ ì—…ë°ì´íŠ¸
+            if (slideTimer >= slideTime)
+            {
+                isSliding = false;
+            }
+            Debug.Log($"SimpleMove, {slideDir}");
+            controller.SimpleMove(slideDir * slidingSpeed);
+            return;
+        }
+        // else
+        // {
+        //     if (Mathf.Abs(finalMovement.x) < 1e-6f) // 1e-6f = 0.000001
+        //     {
+        //         finalMovement.x = 0;
+        //     }
+        // }
+        controller.Move(finalMovement * Time.deltaTime); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    }
+    
+    
+    
+    
+
+    private void Slide()
+    {
+        
     }
 
     private void LookRotation(Vector3 movementDirection)
     {
         Transform cameraTransform = Camera.main.transform;
-        // Ä«¸Ş¶óÀÇ À§Ä¡¸¦ ±âÁØÀ¸·Î Ä³¸¯ÅÍ°¡ ¹Ù¶óº¼ ¹æÇâ °è»ê
+        // Ä«ï¿½Ş¶ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Ù¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         Vector3 direction = cameraTransform.position - player.transform.position;
-        direction.y = 0; // ¼öÆò¸¸ ¹Ù¶óº¸°Ô ÇÏ±â À§ÇØ¼­
+        direction.y = 0; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸°ï¿½ ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½
 
-        // Ä³¸¯ÅÍ°¡ Ä«¸Ş¶ó ¹æÇâÀ» ¹Ù¶óº¸µµ·Ï È¸Àü
+        // Ä³ï¿½ï¿½ï¿½Í°ï¿½ Ä«ï¿½Ş¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸µï¿½ï¿½ï¿½ È¸ï¿½ï¿½
         Quaternion lookRotation = Quaternion.LookRotation(direction);
         player.transform.rotation = lookRotation;
 
-        // Ä³¸¯ÅÍÀÇ ÁÂ/¿ì ¹Ù¶óº¸´Â ¹æÇâ ¼³Á¤
-        if (movementDirection.x < 0) // ¿òÁ÷ÀÓÀÌ ¾øÀ»‹š´Â ±×³É ³ÀµÎ±â À§ÇØ¼­ 0ÀÎ °æ¿ì´Â Ã³¸®ÇÏÁö ¾ÊÀ½.
+        // Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½/ï¿½ï¿½ ï¿½Ù¶óº¸´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        if (movementDirection.x < 0) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×³ï¿½ ï¿½ï¿½ï¿½Î±ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ 0ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
         {
-            // ÁÂÃøÀ¸·Î ÀÌµ¿ÇÏ°í ÀÖ´Â °æ¿ì
-            player.transform.localScale = new Vector3(1, 1, 1);
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ï°ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½
+            player.transform.localScale = new Vector3(1, 1, 1); 
         }
         else if (movementDirection.x > 0)
         {
-            // ¿ìÃøÀ¸·Î ÀÌµ¿ÇÏ°í ÀÖ´Â °æ¿ì
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ï°ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½
             player.transform.localScale = new Vector3(-1, 1, 1);
         }
     }
 
-    private void ReadMovementInput() // PlayerInput.Move ¿¡ ÀÖ´Â °ªÀ» ÀĞ¾î¿È
+    private void ReadMovementInput() // PlayerInput.Move ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ğ¾ï¿½ï¿½
     {
         stateMachine.MovementInput = input.PlayerActions.Move.ReadValue<Vector2>();
     }

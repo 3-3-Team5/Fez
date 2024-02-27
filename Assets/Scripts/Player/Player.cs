@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -14,6 +16,8 @@ public class Player : MonoBehaviour
     public CharacterController Controller { get; private set; }
     public ForceReceiver ForceReceiver { get; private set; }
     [field : SerializeField] public PlayerAnimationData AnimationData { get; private set; }
+    
+    public bool isslipped = false;
 
     PlayerStateMachine stateMachine;
 
@@ -43,5 +47,14 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         stateMachine.PhysicsUpdate();
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (1<<hit.gameObject.layer == 1 << LayerMask.NameToLayer("Water"))
+        {
+            isslipped = true;
+        }
+        else isslipped = false;
     }
 }

@@ -13,7 +13,7 @@ public class PlayerJumpState : PlayerAirState
 
         StartAnimation(animData.JumpParameterHash);
 
-        // Jump ½ÃÀÛ
+        // Jump ï¿½ï¿½ï¿½ï¿½
         forceReceiver.Jump(player.GetJumpForce);
     }
 
@@ -31,4 +31,5 @@ public class PlayerJumpState : PlayerAirState
 
         StopAnimation(animData.JumpParameterHash);
     }
+  
 }

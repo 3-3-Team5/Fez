@@ -41,16 +41,16 @@ public class CemeraController : MonoBehaviour
 
     private void Update()
     {
-        // ³»°¡ Á¤ÀÇÇÑ bool°ªÀº ºí·»µå°¡ ½ÃÀÛ µÇ¾úÀ» ¶§ true ·Î º¯ÇÔ
-        // brain.IsBlending Àº ÇöÀç ºí·»µùÀÌ ÁøÇàÁßÀÎÁö¸¦ ³ªÅ¸³»±â ¶§¹®¿¡ 
-        // µÑÁß ÇÏ³ª¸¸ ¾´´Ù¸é Á¶°ÇÀÌ °è¼Ó °É·Á¼­ ¾µµ¥¾øÀÌ ¸Ş¼Òµå¸¦ °è¼Ó µé¾î°¥°Å¶ó°í »ı°¢ÇØ¼­ ÀÌ·±½ÄÀ¸·Î Á¶°ÇÀ» °É¾úÀ½
+        // ë‚´ê°€ ì •ì˜í•œ boolê°’ì€ ë¸”ë Œë“œê°€ ì‹œì‘ ë˜ì—ˆì„ ë•Œ true ë¡œ ë³€í•¨
+        // brain.IsBlending ì€ í˜„ì¬ ë¸”ë Œë”©ì´ ì§„í–‰ì¤‘ì¸ì§€ë¥¼ ë‚˜íƒ€ë‚´ê¸° ë•Œë¬¸ì— 
+        // ë‘˜ì¤‘ í•˜ë‚˜ë§Œ ì“´ë‹¤ë©´ ì¡°ê±´ì´ ê³„ì† ê±¸ë ¤ì„œ ì“¸ë°ì—†ì´ ë©”ì†Œë“œë¥¼ ê³„ì† ë“¤ì–´ê°ˆê±°ë¼ê³  ìƒê°í•´ì„œ ì´ëŸ°ì‹ìœ¼ë¡œ ì¡°ê±´ì„ ê±¸ì—ˆìŒ
         if (brain.IsBlending && !isBlending)
         {
-            OnBlendStarted();   // ºí·»µùÀÌ ½ÃÀÛ µÇ¸é ÇÃ·¹ÀÌ¾îÀÇ ¿òÁ÷ÀÓÀ» Á¦ÇÑÇÏ±â À§ÇØ¼­
+            OnBlendStarted();   // ë¸”ë Œë”©ì´ ì‹œì‘ ë˜ë©´ í”Œë ˆì´ì–´ì˜ ì›€ì§ì„ì„ ì œí•œí•˜ê¸° ìœ„í•´ì„œ
         }
         else if(!brain.IsBlending && isBlending)
         {
-            OnBlendCompleted(); // ³¡³µÀ¸´Ï Á¦ÇÑ ÇØÁ¦
+            OnBlendCompleted(); // ëë‚¬ìœ¼ë‹ˆ ì œí•œ í•´ì œ
         }
 
     }
@@ -70,7 +70,7 @@ public class CemeraController : MonoBehaviour
 
     public void CameraMove(int idx)
     {
-        int temp = currentCameraIndex; // Ä«¸Ş¶ó ¿ì¼±µµ´Â ÇÑ¹ø¿¡ º¯°æ ÇÏ´Â°Ô ³ªÀ»°Í °°¾Æ¼­ ÀÏ´Ü ÇöÀç ÀÎµ¦½º ÀúÀå
+        int temp = currentCameraIndex; // ì¹´ë©”ë¼ ìš°ì„ ë„ëŠ” í•œë²ˆì— ë³€ê²½ í•˜ëŠ”ê²Œ ë‚˜ì„ê²ƒ ê°™ì•„ì„œ ì¼ë‹¨ í˜„ì¬ ì¸ë±ìŠ¤ ì €ì¥
         currentCameraIndex += idx;
 
         if (currentCameraIndex < 0)
@@ -95,7 +95,7 @@ public class CemeraController : MonoBehaviour
 
     private void OnBlendStarted()
     {
-        // ºí·»µùÀÌ ½ÃÀÛ µÇ¾úÀ¸´Ï PlayerInput ²ô±â
+        // ë¸”ë Œë”©ì´ ì‹œì‘ ë˜ì—ˆìœ¼ë‹ˆ PlayerInput ë„ê¸°
         isBlending = true;
         input.enabled = false;
         Debug.Log("Blending Start");
@@ -103,7 +103,7 @@ public class CemeraController : MonoBehaviour
 
     private void OnBlendCompleted()
     {
-        // ºí·»µùÀÌ ¿Ï·á µÇ¾úÀ¸´Ï PlayerInput ÄÑ±â
+        // ë¸”ë Œë”©ì´ ì™„ë£Œ ë˜ì—ˆìœ¼ë‹ˆ PlayerInput ì¼œê¸°
         isBlending = false;
         input.enabled = true;
         Debug.Log("Blending Completed");
