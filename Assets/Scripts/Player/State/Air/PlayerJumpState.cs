@@ -23,6 +23,9 @@ public class PlayerJumpState : PlayerAirState
 
         if (!controller.isGrounded && controller.velocity.y < 0)
             stateMachine.ChangeState(stateMachine.FallState);
+
+        if (controller.isGrounded && controller.velocity.y < 0)
+            stateMachine.ChangeState(stateMachine.IdleState);
     }
 
     public override void Exit()
