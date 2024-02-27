@@ -17,7 +17,7 @@ public class CemeraController : MonoBehaviour
     PlayerInput input;
 
     CinemachineBrain brain;
-    [SerializeField] CinemachineVirtualCamera[] vcams;
+    CinemachineVirtualCamera[] vcams;
     int currentCameraIndex;
 
     bool isBlending = false;
