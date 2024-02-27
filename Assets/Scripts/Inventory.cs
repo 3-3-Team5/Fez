@@ -1,40 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro.EditorUtilities;
-using UnityEngine;
-using static UnityEditor.Progress;
-
 [System.Serializable]
-public class Item
-{
-    public int itemId; // 아이템 아이디
-    public string itemName; // 아이템 이름
-    public string itemDescription; // 아이템 설명
-    public Sprite itemSprite; // 아이템 이미지
-    public int itemIndex; // 인벤토리의 몇번째 위치에 있는지
-    // 퍼즐 외의 아이템이 있다면 아이템 타입 추가 & 퍼즐 타입은 위치 정보 필요)
-    // 퍼즐만 존재한다면 퍼즐의 올바른 위치 정보 추가 (해당 위치로 맞는 자리인지 판단 or itemId로 판단)
-
-    public Item(int id, string name, string description)
-    {
-        itemId = id;
-        itemName = name;
-        itemDescription = description;
-        itemSprite = Resources.Load<Sprite>(itemName); // or id로 로드
-    }
-}
-
 public class Inventory
 {
-    private Item[] _items;
+    public ItemData[] _items;
 
     public Inventory(int size)
     {
-        _items = new Item[size];
+        _items = new ItemData[size];
     }
 
     // 아이템 추가
-    public bool AddItem(Item item)
+    public bool AddItem(ItemData item)
     {
         for (int i = 0; i < _items.Length; i++)
         {
@@ -65,15 +40,24 @@ public class Inventory
         }
 
         // 아이템 이동
-        Item item1 = _items[oldIndex];
-        Item item2 = _items[newIndex];
+        ItemData temp = _items[oldIndex];
+        _items[oldIndex] = _items[newIndex];
+        _items[newIndex] = temp;
+
+        // 필요한 경우 itemIndex 업데이트
+        //if (_items[oldIndex] != null) _items[oldIndex].itemIndex = oldIndex;
+        //if (_items[newIndex] != null) _items[newIndex].itemIndex = newIndex;
+
+        /*
+        _items[oldIndex].itemIndex = newIndex;
+        if (_items[newIndex] != null)
+            _items[newIndex].itemIndex = oldIndex;
+        /*
+        // 아이템 이동
+        ItemData item1 = _items[oldIndex];
+        ItemData item2 = _items[newIndex];
         _items[oldIndex] = item2;
         _items[newIndex] = item1;
-    }
-
-    // 인벤토리 변경 후 UI 업데이트
-    public void InventoryUpdate()
-    {
-
+        */
     }
 }
