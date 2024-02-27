@@ -11,7 +11,6 @@ public class PlayerBaseState : IState
 
     protected Player player;
     protected PlayerInput input;
-    protected PlayerSliding playerSliding;
     protected PlayerAnimationData animData;
     protected CharacterController controller;
     protected ForceReceiver forceReceiver;
@@ -20,7 +19,7 @@ public class PlayerBaseState : IState
     private float slideTime = 2f; // 미끄러지는 동작 지속 시간
     private float slideTimer = 0f;
     protected float slidingSpeed = 2f;
-    private Vector2 slideDir = Vector2.zero;
+    private static Vector2 slideDir = Vector2.zero;
 
     public PlayerBaseState(PlayerStateMachine playerStateMachine)
     {
@@ -70,13 +69,12 @@ public class PlayerBaseState : IState
     private void Move()
     {
         Vector3 movementDirection = GetMovementDirection();
-        
+
         if (movementDirection != Vector3.zero)
         {
-            Debug.Log($"MovementDirection {movementDirection}");
             slideDir = movementDirection;
-            //Debug.Log($"slideDir {slideDir}");
         }
+
         Move(movementDirection);
         LookRotation(movementDirection);
     }
@@ -93,41 +91,34 @@ public class PlayerBaseState : IState
 
         // Z ������ �̵��� �� 0.0000007213769 ~ -0.0000008539862 ���� �߰�
         // Ư�� ������ ������ �׳� 0���� ó��
-
-        if (player.isslipped && Mathf.Approximately(finalMovement.magnitude, 0f)) // 이동이 종료되고, 미끄러운 상태라면
+        if (slideDir!= Vector2.zero&&player.isslipped && Mathf.Approximately(finalMovement.magnitude, 0f) && !isSliding) 
+            // 이동이 종료되고, 미끄러운 상태라면
         {
+            Debug.Log("Slipped");
             isSliding = true;
-            slideTimer = 0f; // 미끄러지는 동작 시간 초기화
+            slideTimer = 0f; // 미끄러지는 동작 시간 초기화    
         }
-        
+
         if (isSliding)
         {
             slideTimer += Time.deltaTime; // 미끄러지는 동작 시간 업데이트
             if (slideTimer >= slideTime)
             {
                 isSliding = false;
+                slideDir = Vector2.zero;
+                return;
             }
-            Debug.Log($"SimpleMove, {slideDir}");
-            controller.SimpleMove(slideDir * slidingSpeed);
+
+            controller.SimpleMove(cameraRight * slideDir * slidingSpeed);
             return;
         }
-        // else
-        // {
-        //     if (Mathf.Abs(finalMovement.x) < 1e-6f) // 1e-6f = 0.000001
-        //     {
-        //         finalMovement.x = 0;
-        //     }
-        // }
+       
         controller.Move(finalMovement * Time.deltaTime); // ������ ����
     }
-    
-    
-    
-    
+
 
     private void Slide()
     {
-        
     }
 
     private void LookRotation(Vector3 movementDirection)
@@ -145,7 +136,7 @@ public class PlayerBaseState : IState
         if (movementDirection.x < 0) // �������� �������� �׳� ���α� ���ؼ� 0�� ���� ó������ ����.
         {
             // �������� �̵��ϰ� �ִ� ���
-            player.transform.localScale = new Vector3(1, 1, 1); 
+            player.transform.localScale = new Vector3(1, 1, 1);
         }
         else if (movementDirection.x > 0)
         {

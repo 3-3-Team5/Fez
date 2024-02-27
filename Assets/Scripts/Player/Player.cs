@@ -49,7 +49,7 @@ public class Player : MonoBehaviour
         stateMachine.PhysicsUpdate();
     }
 
-    private void OnControllerColliderHit(ControllerColliderHit hit)
+    private void OnControllerColliderHit(ControllerColliderHit hit) //미끄러짐 구현에 필요한 메서드
     {
         if (1<<hit.gameObject.layer == 1 << LayerMask.NameToLayer("Water"))
         {
