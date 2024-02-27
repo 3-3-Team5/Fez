@@ -303,8 +303,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1532800699}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 4.04, z: -10}
+  m_LocalRotation: {x: -0.16288553, y: -0.22283822, z: 0.037790257, w: -0.9604079}
+  m_LocalPosition: {x: -7.939743, y: 7.7442193, z: -15.542597}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -358,6 +358,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 1688218323}
+  vcams: []
 --- !u!4 &1688218323 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5111793608112791181, guid: ddd0f5297d78f884e94975cd83fb4906, type: 3}
