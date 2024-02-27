@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerClimbState : PlayerGroundState
 {
@@ -15,7 +16,7 @@ public class PlayerClimbState : PlayerGroundState
         base.Enter();
 
         StartAnimation(animData.ClimbParameterHash);
-        controller.enabled = false;
+        controller.enabled = false; // 또는 base에서 조건 걸어서 수정?
     }
 
     public override void Update()
@@ -23,8 +24,6 @@ public class PlayerClimbState : PlayerGroundState
         base.Update();
 
         isClimbing = player.Animator.GetBool(animData.ClimbParameterHash);
-
-
 
         if (!isClimbing)
         {
@@ -38,5 +37,10 @@ public class PlayerClimbState : PlayerGroundState
 
         StopAnimation(animData.ClimbParameterHash);
         controller.enabled = true;  // 아까 상태가 시작 될 때 컨트롤러를 껐으니 다시 켜줌
+    }
+
+    protected override void OnJumpStarted(InputAction.CallbackContext context)
+    {
+        
     }
 }

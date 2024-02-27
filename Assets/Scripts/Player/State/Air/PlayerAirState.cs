@@ -40,15 +40,15 @@ public class PlayerAirState : PlayerBaseState
     {
         RaycastHit hit;
         bool isHit = false;
-        Vector3 rayStartPos = player.transform.position;
-        Vector3 rayDirection = Camera.main.transform.right * player.transform.localScale.x;
+        Vector3 rayStartPos = player.transform.position; // 플레이어 중앙
+        Vector3 rayDirection = Camera.main.transform.right * player.transform.localScale.x; // 캐릭터가 보고있는 방향으로
 
         for (int i = 0; i < 3; ++i)
         {
             Vector3 modifier = Vector3.zero;
             modifier.y += i * 0.2f;
 
-            isHit = Physics.Raycast(rayStartPos - modifier, rayDirection, out hit, player.layDistance);
+            isHit = Physics.Raycast(rayStartPos - modifier, rayDirection, out hit, player.layDistance); // 레이어 검사 추가 예정
             if (isHit)
             {
                 Vector3 topPosition = hit.collider.bounds.max;
