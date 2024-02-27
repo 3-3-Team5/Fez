@@ -9,6 +9,8 @@ public class PlayerStateMachine : StateMachine
     // States
     public PlayerIdleState IdleState { get; private set; }
     public PlayerMoveState MoveState { get; private set; }
+    public PlayerClimbState ClimbState { get; private set; }
+
     public PlayerJumpState JumpState { get; private set; }
     public PlayerFallState FallState { get; private set; }
 
@@ -23,6 +25,7 @@ public class PlayerStateMachine : StateMachine
 
         IdleState = new(this);
         MoveState = new(this);
+        ClimbState = new(this);
         JumpState = new(this);
         FallState = new(this);
     }

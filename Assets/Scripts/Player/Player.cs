@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -13,9 +14,12 @@ public class Player : MonoBehaviour
     public PlayerInput Input { get; private set; }
     public CharacterController Controller { get; private set; }
     public ForceReceiver ForceReceiver { get; private set; }
-    [field : SerializeField] public PlayerAnimationData AnimationData { get; private set; }
+    [field: SerializeField] public PlayerAnimationData AnimationData { get; private set; }
 
     PlayerStateMachine stateMachine;
+
+    public float layDistance = .7f;
+    public float climbableDistance = .6f;
 
     private void Awake()
     {
@@ -43,5 +47,23 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         stateMachine.PhysicsUpdate();
+
+        Debug.Log($"Current State : {stateMachine.GetCurState()}");
+    }
+
+    private void OnDrawGizmos()
+    {
+        Vector3 direction = Camera.main.transform.right * transform.localScale.x;
+
+        Gizmos.color = Color.red;
+
+        // 레이 그리기
+        for (int i = 0; i < 3; ++i)
+        {
+            Vector3 modifier = Vector3.zero;
+            modifier.y += i * 0.2f;
+
+            Gizmos.DrawRay(transform.position - modifier, direction * layDistance);
+        }
     }
 }

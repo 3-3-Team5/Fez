@@ -99,12 +99,12 @@ public class PlayerBaseState : IState
         if (movementDirection.x < 0) // 움직임이 없을떄는 그냥 냅두기 위해서 0인 경우는 처리하지 않음.
         {
             // 좌측으로 이동하고 있는 경우
-            player.transform.localScale = new Vector3(1, 1, 1);
+            player.transform.localScale = new Vector3(-1, 1, 1);
         }
         else if (movementDirection.x > 0)
         {
             // 우측으로 이동하고 있는 경우
-            player.transform.localScale = new Vector3(-1, 1, 1);
+            player.transform.localScale = new Vector3(1, 1, 1);
         }
     }
 
