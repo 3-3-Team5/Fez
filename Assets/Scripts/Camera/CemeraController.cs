@@ -46,11 +46,11 @@ public class CemeraController : MonoBehaviour
         // 둘중 하나만 쓴다면 조건이 계속 걸려서 쓸데없이 메소드를 계속 들어갈거라고 생각해서 이런식으로 조건을 걸었음
         if (brain.IsBlending && !isBlending)
         {
-            OnBlendStarted();
+            OnBlendStarted();   // 블렌딩이 시작 되면 플레이어의 움직임을 제한하기 위해서
         }
         else if(!brain.IsBlending && isBlending)
         {
-            OnBlendCompleted();
+            OnBlendCompleted(); // 끝났으니 제한 해제
         }
 
     }
@@ -80,10 +80,6 @@ public class CemeraController : MonoBehaviour
 
         VCamReset(vcams[temp]);
         vcams[currentCameraIndex].Priority = (int)CameraState.Active;
-
-        // 여기서 일시적으로 PlayerInput을 끄고 블렌딩이 완료 되었을 때 다시 켜면
-        // 카메라 움직임이 있을 때 캐릭터의 움직임을 제한해서 대각선같은 이상한 움직임을 막을 수 있을것 같음.
-        //OnBlendStarted();
     }
 
     void VCamReset(CinemachineVirtualCamera vcam)
