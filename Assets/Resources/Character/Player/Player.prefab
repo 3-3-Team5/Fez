@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 9222686008481117183}
   - component: {fileID: 3736363796905399091}
   - component: {fileID: 1965749916908365236}
+  - component: {fileID: 4885485950983138837}
   m_Layer: 0
   m_Name: idle00
   m_TagString: Untagged
@@ -76,7 +77,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 28cff5673df0a7e4e977eacab08b26df, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 2, y: 2}
@@ -106,6 +107,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4885485950983138837
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 455058425061624660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab2a7e9f93ce6864c84c273cd1b0fb42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2532500083984742757
 GameObject:
   m_ObjectHideFlags: 0
@@ -173,7 +186,7 @@ Transform:
   - {fileID: 5111793608112791181}
   - {fileID: 7961168901127100433}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &6351836821641899314
 CharacterController:
@@ -232,9 +245,12 @@ MonoBehaviour:
     groundParameterName: '@Ground'
     idleParameterName: Idle
     moveParameterName: Move
+    ClimbParameterName: Climb
     airParameterName: '@Air'
     jumpParameterName: Jump
     fallParameterName: Fall
+  layDistance: 0.7
+  climbableDistance: 0.6
 --- !u!114 &5175138767430840550
 MonoBehaviour:
   m_ObjectHideFlags: 0
