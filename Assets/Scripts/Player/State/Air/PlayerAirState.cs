@@ -56,10 +56,10 @@ public class PlayerAirState : PlayerBaseState
 
                 if (distanceToTop < player.climbableDistance + modifier.y)
                 {
-                    Debug.Log($"오브젝트 상단까지의 거리 : {distanceToTop}, " +
-                        $"start.y : {rayStartPos.y - modifier.y}, " +
-                        $"i : {i}, " +
-                        $"able : {player.climbableDistance + modifier.y}");
+                    //Debug.Log($"오브젝트 상단까지의 거리 : {distanceToTop}, " +
+                    //    $"start.y : {rayStartPos.y - modifier.y}, " +
+                    //    $"i : {i}, " +
+                    //    $"able : {player.climbableDistance + modifier.y}");
 
                     // 벽을 탈 수 있으니까 벽을 타고 올라 갔을때의 플레이어 위치를 계산해서 리턴
                     float movePosY = (distanceToTop + controller.height / 2);

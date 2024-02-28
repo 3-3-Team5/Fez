@@ -18,8 +18,14 @@ public class PlayerGroundState : PlayerBaseState
     {
         base.Update();
 
-        if (!controller.isGrounded && controller.velocity.y < 0) // 지금 땅을 밟고있지 않을 경우에 FallState로
-            stateMachine.ChangeState(stateMachine.FallState);
+        // ClimbState가 아닐 때만 떨어지게 만들어야함 이 조건이 들어가지 않으면 ClimbState가 바로 종료됨
+        // 조건문 하나에 다 넣지 않은 이유 : 불필요한 !controller.isGrounded && controller.velocity.y < -0.5f 연산을 하지 않게끔
+        if (stateMachine.GetCurState() != stateMachine.ClimbState)
+        {
+            // 지금 땅을 밟고있지 않을 경우에 FallState로
+            if (!controller.isGrounded && controller.velocity.y < -0.5f)
+                stateMachine.ChangeState(stateMachine.FallState);
+        }
     }
 
     public override void Exit() 

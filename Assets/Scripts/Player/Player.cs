@@ -48,7 +48,7 @@ public class Player : MonoBehaviour
     {
         stateMachine.PhysicsUpdate();
 
-        Debug.Log($"Current State : {stateMachine.GetCurState()}");
+        //Debug.Log($"Current State : {stateMachine.GetCurState()}");
     }
 
     private void OnDrawGizmos()

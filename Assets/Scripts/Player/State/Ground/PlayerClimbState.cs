@@ -14,11 +14,14 @@ public class PlayerClimbState : PlayerGroundState
 
     public override void Enter()
     {
-        isClimbing = true;
-
         base.Enter();
-
         StartAnimation(animData.ClimbParameterHash);
+
+        bool test = player.Animator.GetBool(animData.ClimbParameterHash);
+
+        Debug.Log("Climb Start");
+
+        isClimbing = true;
         controller.enabled = false; // 또는 base에서 조건 걸어서 수정?
     }
 
@@ -37,7 +40,7 @@ public class PlayerClimbState : PlayerGroundState
     public override void Exit()
     {
         base.Exit();
-
+        Debug.Log("Climb end");
         StopAnimation(animData.ClimbParameterHash);
         controller.enabled = true;  // 아까 상태가 시작 될 때 컨트롤러를 껐으니 다시 켜줌
     }

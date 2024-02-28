@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public abstract class StateMachine
 {
     protected IState currentState;
@@ -6,7 +8,7 @@ public abstract class StateMachine
     {
         currentState?.Exit();
         currentState = newState;
-        //Debug.Log($"Chage State : {newState.GetType()}");
+        Debug.Log($"Chage State : {newState.GetType()}");
         currentState.Enter();
     }
 
