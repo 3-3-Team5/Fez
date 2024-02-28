@@ -50,7 +50,7 @@ public class InventoryUI : MonoBehaviour
         // 드래그 이벤트
         EventTrigger.Entry dragEntry = new EventTrigger.Entry();
         dragEntry.eventID = EventTriggerType.Drag;
-        dragEntry.callback.AddListener((data) => { OnDrag(data); }); // Drag 이벤트 처리를 위한 콜백 추가
+        dragEntry.callback.AddListener((data) => { OnDrag(data); });
         trigger.triggers.Add(dragEntry);
 
         // 드랍 이벤트
@@ -72,10 +72,10 @@ public class InventoryUI : MonoBehaviour
                 draggedItemIcon = new GameObject("DraggedItemIcon");
                 var image = draggedItemIcon.AddComponent<Image>();
                 var rectTransform = draggedItemIcon.GetComponent<RectTransform>();
-                rectTransform.sizeDelta = new Vector2(100, 100); // 적절한 크기 조정
+                rectTransform.sizeDelta = new Vector2(100, 100);
                 image.sprite = itemSprite;
-                image.raycastTarget = false; // 드래그 중인 아이콘은 히트 테스트에서 제외
-                draggedItemIcon.transform.SetParent(transform.GetChild(0)); // Canvas 또는 드래그 이벤트를 관리하는 컴포넌트의 부모로 설정
+                image.raycastTarget = false; // 드래그 중인 아이콘은 히트 제외
+                draggedItemIcon.transform.SetParent(transform.GetChild(0));
                 draggedItemIcon.transform.localScale = Vector3.one;
             }
 
