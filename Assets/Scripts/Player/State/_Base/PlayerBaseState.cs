@@ -19,7 +19,7 @@ public class PlayerBaseState : IState
     private float slideTime = 2f; // 미끄러지는 동작 지속 시간
     private float slideTimer = 0f;
     protected float slidingSpeed = 2f;
-    private static Vector2 slideDir = Vector2.zero;
+   
 
     public PlayerBaseState(PlayerStateMachine playerStateMachine)
     {
@@ -72,7 +72,7 @@ public class PlayerBaseState : IState
 
         if (movementDirection != Vector3.zero)
         {
-            slideDir = movementDirection;
+            player.slideDir = movementDirection;
         }
 
         Move(movementDirection);
@@ -91,28 +91,29 @@ public class PlayerBaseState : IState
 
         // Z ������ �̵��� �� 0.0000007213769 ~ -0.0000008539862 ���� �߰�
         // Ư�� ������ ������ �׳� 0���� ó��
-        if (slideDir!= Vector2.zero&&player.isslipped && Mathf.Approximately(finalMovement.magnitude, 0f) && !isSliding) 
+        if (player.slideDir != Vector2.zero && player.isslipped && Mathf.Approximately(finalMovement.magnitude, 0f) &&
+            !isSliding)
             // 이동이 종료되고, 미끄러운 상태라면
         {
-            Debug.Log("Slipped");
             isSliding = true;
-            slideTimer = 0f; // 미끄러지는 동작 시간 초기화    
+            slideTimer = 0f;
         }
 
         if (isSliding)
         {
-            slideTimer += Time.deltaTime; // 미끄러지는 동작 시간 업데이트
+            slideTimer += Time.deltaTime;
             if (slideTimer >= slideTime)
             {
                 isSliding = false;
-                slideDir = Vector2.zero;
+                player.slideDir = Vector2.zero;
                 return;
             }
 
-            controller.SimpleMove(cameraRight * slideDir * slidingSpeed);
+            if (player.isslipped) //미끄러지지 않는 부분 들어갈 때 바로 멈출 수 있도록
+                controller.SimpleMove(cameraRight * player.slideDir * slidingSpeed);
             return;
         }
-       
+
         controller.Move(finalMovement * Time.deltaTime); // ������ ����
     }
 
