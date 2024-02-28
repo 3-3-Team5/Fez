@@ -6,7 +6,8 @@ public class PlayerHitState : PlayerBaseState
 {
     private float needtime = 1f;
     private float currenttime = 0f;
-    private Vector3 enddir;
+    private Vector3 startdir;
+    
 
     public PlayerHitState(PlayerStateMachine playerStateMachine) : base(playerStateMachine)
     {
@@ -15,7 +16,8 @@ public class PlayerHitState : PlayerBaseState
     public override void Enter()
     {
         base.Enter();
-        enddir = new Vector3(player.knockbackDir.x, 0, player.knockbackDir.z);
+        stateMachine.Player.moveSpeedModifier = 0f; // 이렇게하면 움직임 제한.
+        startdir = player.knockbackDir;
         //StartAnimation(animData.HitParameterHash);
     }
 
@@ -29,29 +31,26 @@ public class PlayerHitState : PlayerBaseState
     {
         base.Update();
         //enddir = Vector3.Lerp(enddir, Vector3.zero, currenttime/needtime);
-        player.knockbackDir = Vector3.Lerp(player.knockbackDir, Vector3.zero, currenttime / needtime);
-        Debug.Log($"{currenttime} || {needtime} = {currenttime/needtime} / KB : {player.knockbackDir}");
+        player.knockbackDir = Vector3.Lerp(startdir, Vector3.zero, currenttime/needtime);
         currenttime += Time.deltaTime;
 
         if (currenttime >= needtime)
         {
             currenttime = 0f;
             player.isKnockback = false;
+            player.moveSpeedModifier = 1f;
             if (controller.velocity.y < 0)
             {
-                //player.knockbackDir = Vector3.zero;
                 stateMachine.ChangeState(stateMachine.FallState);
                 return;
             }
-
-            //player.knockbackDir = Vector3.zero;
+            
             stateMachine.ChangeState(stateMachine.IdleState);
         }
     }
 
     public override void HandleInput()
     {
-        if (!player.isKnockback)
-            base.HandleInput();
+        base.HandleInput();
     }
 }

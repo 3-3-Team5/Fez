@@ -19,7 +19,7 @@ public class PlayerBaseState : IState
     private float slideTime = 2f; // 미끄러지는 동작 지속 시간
     private float slideTimer = 0f;
     protected float slidingSpeed = 2f;
-   
+
 
     public PlayerBaseState(PlayerStateMachine playerStateMachine)
     {
@@ -71,7 +71,7 @@ public class PlayerBaseState : IState
 
         if (movementDirection != Vector3.zero)
         {
-            player.slideDir = movementDirection.x*Camera.main.transform.right;
+            player.slideDir = movementDirection.x * Camera.main.transform.right;
         }
 
         Move(movementDirection);
@@ -83,11 +83,11 @@ public class PlayerBaseState : IState
         float movementSpeed = player.GetMoveSpeed;
 
         Vector3 cameraRight = Camera.main.transform.right;
-        
-        movementDirection = cameraRight * movementDirection.x; // ī�޶� �������� �̵� ������ ����
 
+        movementDirection = cameraRight * movementDirection.x; // ī�޶� �������� �̵� ������ ����
+        
         // ��/�� �̵� - movementDirection , ��/��(����, �߷�) - ForceReceiver.Movement
-        Vector3 finalMovement = movementDirection * movementSpeed + player.ForceReceiver.Movement+player.knockbackDir;
+        Vector3 finalMovement = movementDirection * movementSpeed + player.ForceReceiver.Movement + player.knockbackDir;
         // Z ������ �̵��� �� 0.0000007213769 ~ -0.0000008539862 ���� �߰�
         // Ư�� ������ ������ �׳� 0���� ó��
         if (player.slideDir != Vector3.zero && player.isslipped && Mathf.Approximately(finalMovement.magnitude, 0f) &&

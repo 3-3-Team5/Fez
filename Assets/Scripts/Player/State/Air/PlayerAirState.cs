@@ -17,10 +17,9 @@ public class PlayerAirState : PlayerBaseState
     public override void Update()
     {
         base.Update();
-        if (player.knockbackDir != Vector3.zero)
+        if (player.isKnockback)
         {
             stateMachine.ChangeState(stateMachine.HitState);
-            return;
         }
     }
 
