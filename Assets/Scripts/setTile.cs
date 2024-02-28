@@ -119,6 +119,16 @@ public class setTile : MonoBehaviour
         MakeBlock(4, 10, 1, 15, 15, 16, 6);
         MakeBlock(9, 15, 3, 13, 19, 20, 6);
 
+        //¹®
+        MakeBlock(6, 7, 2, 3, -3, -2, 8);
+        MakeBlock(13, 14, 3, 4, 1, 2, 8);
+        MakeBlock(12, 13, 5, 6, 5, 6, 8);
+        MakeBlock(3, 4, 9, 10, 5, 6, 7);
+        MakeBlock(6, 7, 2, 3, 13, 14, 8);
+        MakeBlock(6, 7, 13, 14, 13, 14, 8);
+        MakeBlock(12, 13, 4, 5, 17, 18, 8);
+        MakeBlock(14, 15, 10, 11, 17, 18, 7);
+
         //´Ù¸®
         MakeBlock(14, 21, 6, 7, 10, 11, 6);
         MakeBlock(21, 22, -2, 7, 10, 11, 6);
@@ -128,11 +138,39 @@ public class setTile : MonoBehaviour
         MakeBlock(8, 10, 11, 13, 10, 12, 0);
         MakeBlock(21, 22, 6, 7, 12, 13, 0);
         MakeBlock(5, 7, 6, 8, 18, 20, 0);
+        MakeBlock(13, 16, 7, 11, 14, 17, 0);
 
 
         //µÕµÕ¼¶1
         MakeBlock(21, 28, -9, -2, 9, 13, 0);
         MakeBlock(22, 26, -7, -4, 11, 14, 1);
+
+        //³ª¹«
+        MakeBlock(0, 1, 14, 15, 0, 1, 10);
+        MakeBlock(-1, 2, 13, 16 , 1, 4, 11);
+
+        //µÕµÕ¼¶1 ³ª¹«
+        MakeBlock(24, 25, -7, -5, 14, 15, 10);
+        MakeBlock(25, 26, -7, -6, 14, 16, 10);
+        MakeBlock(23, 27, -8, -4, 16, 20, 11);
+
+        //µÕµÕ¼¶1 ¹®
+        MakeBlock(24, 25, -7, -6, 8, 9, 8);
+
+        //Ãß°¡ ¹ßÆÇ
+        MakeBlock(8, 9, 11, 12, 1, 2, 13);
+        MakeBlock(10, 11, 11, 12, 8, 9, 13);
+        MakeBlock(10, 11, 6, 7, 8, 9, 13);
+        MakeBlock(7, 8, 9, 10, 17, 18, 12);
+
+        //µÕµÕ¼¶2 
+        MakeBlock(-1, 0, 5, 6, 21, 22, 0);
+        MakeBlock(-5, -1, 19, 23, 18, 22, 0);
+
+
+        //ÆÄÀÌ³Î ¹ßÆÇ
+        MakeBlock(2, 4, 1, 3, 24, 25, 1);
+        MakeBlock(15, 17, -3, -1, 26, 27, 1);
     }
 
     void MakeBlock(int StartX, int MaxX, int StartZ, int MaxZ, int StartY, int MaxY, int blockNum)
@@ -144,10 +182,10 @@ public class setTile : MonoBehaviour
                     for (int z = StartZ; z < MaxZ; z++)
                         for (int y = StartY; y < MaxY; y++)
                         {
-                            if (y == 1 || y==12)
+                            if (y == 1 || y==12 || y==16 || y == 21)
                             {
                                 var land = Instantiate(obj[5], new Vector3(x, y - 5.5f, z), Quaternion.identity, transform);
-                                if (z == 0 || z == -9) land.transform.rotation = Quaternion.AngleAxis(180f, Vector3.up);
+                                if (z == 0 || z == -9 || z==7 || z ==5 || z == 19 ) land.transform.rotation = Quaternion.AngleAxis(180f, Vector3.up);
                             }
                             else Instantiate(obj[blockNum], new Vector3(x, y - 5.5f, z), Quaternion.identity, transform);
                         }
@@ -160,9 +198,9 @@ public class setTile : MonoBehaviour
                             if (y == MaxY -1)
                             {
                                 var front = Instantiate(obj[2], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
-                                if (z == 3 || z ==2 || z==5 || z ==7 || z == -7 || z == 4) front.transform.rotation = Quaternion.AngleAxis(180f, Vector3.up);
+                                if (z == 3 || z ==2 || z==5 || z ==7 || z == -7 || z == 4 || z == 1 || z == -3) front.transform.rotation = Quaternion.AngleAxis(180f, Vector3.up);
                             }
-                            else Instantiate(obj[1], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
+                            else Instantiate(obj[9], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
                         }
                 break;
             case 6: 
@@ -171,6 +209,42 @@ public class setTile : MonoBehaviour
                         for (int y = StartY; y < MaxY; y++)
                         {
                             Instantiate(obj[blockNum], new Vector3(x, y - 3.05f, z), Quaternion.identity, transform);
+                        }
+                break;
+
+            case 7:
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            Instantiate(obj[blockNum], new Vector3(x- 0.5f, y, z), Quaternion.identity, transform);
+                        }
+                break;
+
+            case 8:
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            Instantiate(obj[blockNum], new Vector3(x, y , z - 0.5f), Quaternion.identity, transform);
+                        }
+                break;
+            case 12:
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            Instantiate(obj[blockNum], new Vector3(x - 0.5f, y - 0.5f, z), Quaternion.identity, transform);
+                        }
+                break;
+
+            case 13 :
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            var jump = Instantiate(obj[blockNum], new Vector3(x, y - 0.5f, z - 0.5f), Quaternion.identity, transform);
+                            if(z ==6 ) jump.transform.rotation = Quaternion.AngleAxis(180f, Vector3.up);
                         }
                 break;
             default:
