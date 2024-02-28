@@ -15,11 +15,17 @@ public class Player : MonoBehaviour
     public PlayerInput Input { get; private set; }
     public CharacterController Controller { get; private set; }
     public ForceReceiver ForceReceiver { get; private set; }
-    [field : SerializeField] public PlayerAnimationData AnimationData { get; private set; }
+    [field: SerializeField] public PlayerAnimationData AnimationData { get; private set; }
+
+    [HideInInspector] public bool isslipped = false;
+    [HideInInspector] public Vector3 slideDir = Vector3.zero;
+    [HideInInspector]public Vector3 knockbackDir = Vector3.zero;
+
+    public bool isKnockback = false;
+
+    public float knockbackPower;
     
-    [HideInInspector]public bool isslipped = false;
-    [HideInInspector]public Vector2 slideDir = Vector2.zero; //다른 State스크립트에서 간섭하기때문에 static으로 선언하면 문제없이 동작함.
-    //TODO : Player 스크립트로 옮기던가 할 것.
+    
 
     PlayerStateMachine stateMachine;
 
@@ -31,7 +37,6 @@ public class Player : MonoBehaviour
         Input = GetComponent<PlayerInput>();
         Controller = GetComponent<CharacterController>();
         ForceReceiver = GetComponent<ForceReceiver>();
-
         stateMachine = new(this);
     }
 
@@ -53,7 +58,7 @@ public class Player : MonoBehaviour
 
     private void OnControllerColliderHit(ControllerColliderHit hit) //미끄러짐 구현에 필요한 메서드
     {
-        if (1<<hit.gameObject.layer == 1 << LayerMask.NameToLayer("Water"))
+        if (1 << hit.gameObject.layer == 1 << LayerMask.NameToLayer("Water"))
         {
             isslipped = true;
         }
@@ -61,8 +66,20 @@ public class Player : MonoBehaviour
 
         if (hit.gameObject.TryGetComponent<DisappearBlock>(out DisappearBlock disappearBlock))
         {
-            if(Mathf.Approximately(hit.point.y,hit.gameObject.GetComponent<Collider>().bounds.max.y))
+            if (Mathf.Approximately(hit.point.y, hit.gameObject.GetComponent<Collider>().bounds.max.y))
                 disappearBlock.StartAnim();
+        }
+
+        if (1 << hit.gameObject.layer == 1 << LayerMask.NameToLayer("Trap"))
+        {
+            if (!isKnockback)
+            {
+                isKnockback = true;
+                //TODO : 힘을 받아 넉백되는 동작 구현하기 1. ForceReceiver 2. PlayerBaseState
+                Vector3 knockback = (hit.point - hit.collider.bounds.center).normalized;
+                Vector3 cameraRight = Camera.main.transform.right;
+                knockbackDir = cameraRight.x == 0 ? ((knockback.z * cameraRight)+ knockback.y*Vector3.up)*knockbackPower : ((knockback.x * cameraRight)+ knockback.y*Vector3.up)*knockbackPower;                
+            }
         }
     }
 }

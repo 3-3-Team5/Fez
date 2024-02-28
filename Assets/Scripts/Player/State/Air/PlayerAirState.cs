@@ -14,6 +14,16 @@ public class PlayerAirState : PlayerBaseState
         StartAnimation(animData.AirParameterHash);
     }
 
+    public override void Update()
+    {
+        base.Update();
+        if (player.knockbackDir != Vector3.zero)
+        {
+            stateMachine.ChangeState(stateMachine.HitState);
+            return;
+        }
+    }
+
     public override void Exit()
     {
         base.Exit();

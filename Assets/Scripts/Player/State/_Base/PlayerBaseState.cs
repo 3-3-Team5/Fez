@@ -53,7 +53,6 @@ public class PlayerBaseState : IState
     public virtual void Update()
     {
         Move();
-        Slide();
     }
 
     protected virtual void AddInputActionsCallbacks()
@@ -72,7 +71,7 @@ public class PlayerBaseState : IState
 
         if (movementDirection != Vector3.zero)
         {
-            player.slideDir = movementDirection;
+            player.slideDir = movementDirection.x*Camera.main.transform.right;
         }
 
         Move(movementDirection);
@@ -84,14 +83,14 @@ public class PlayerBaseState : IState
         float movementSpeed = player.GetMoveSpeed;
 
         Vector3 cameraRight = Camera.main.transform.right;
+        
         movementDirection = cameraRight * movementDirection.x; // ī�޶� �������� �̵� ������ ����
 
         // ��/�� �̵� - movementDirection , ��/��(����, �߷�) - ForceReceiver.Movement
-        Vector3 finalMovement = movementDirection * movementSpeed + player.ForceReceiver.Movement;
-
+        Vector3 finalMovement = movementDirection * movementSpeed + player.ForceReceiver.Movement+player.knockbackDir;
         // Z ������ �̵��� �� 0.0000007213769 ~ -0.0000008539862 ���� �߰�
         // Ư�� ������ ������ �׳� 0���� ó��
-        if (player.slideDir != Vector2.zero && player.isslipped && Mathf.Approximately(finalMovement.magnitude, 0f) &&
+        if (player.slideDir != Vector3.zero && player.isslipped && Mathf.Approximately(finalMovement.magnitude, 0f) &&
             !isSliding)
             // 이동이 종료되고, 미끄러운 상태라면
         {
@@ -105,21 +104,16 @@ public class PlayerBaseState : IState
             if (slideTimer >= slideTime)
             {
                 isSliding = false;
-                player.slideDir = Vector2.zero;
+                player.slideDir = Vector3.zero;
                 return;
             }
 
             if (player.isslipped) //미끄러지지 않는 부분 들어갈 때 바로 멈출 수 있도록
-                controller.SimpleMove(cameraRight * player.slideDir * slidingSpeed);
+                controller.SimpleMove(player.slideDir * slidingSpeed);
             return;
         }
 
         controller.Move(finalMovement * Time.deltaTime); // ������ ����
-    }
-
-
-    private void Slide()
-    {
     }
 
     private void LookRotation(Vector3 movementDirection)

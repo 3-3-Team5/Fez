@@ -17,6 +17,11 @@ public class PlayerGroundState : PlayerBaseState
     public override void Update()
     {
         base.Update();
+        if (player.knockbackDir != Vector3.zero)
+        {
+            stateMachine.ChangeState(stateMachine.HitState);
+            return;
+        }
 
         if (!controller.isGrounded && controller.velocity.y < 0) // 지금 땅을 밟고있지 않을 경우에 FallState로
             stateMachine.ChangeState(stateMachine.FallState);
