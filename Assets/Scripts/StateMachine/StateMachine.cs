@@ -8,7 +8,7 @@ public abstract class StateMachine
     {
         currentState?.Exit();
         currentState = newState;
-        Debug.Log($"Chage State : {newState.GetType()}");
+        //Debug.Log($"Chage State : {newState.GetType()}");
         currentState.Enter();
     }
 

@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <baseStats>k__BackingField:
     <MovementSpeed>k__BackingField: 5
-    <jumpForce>k__BackingField: 6
+    <jumpForce>k__BackingField: 9

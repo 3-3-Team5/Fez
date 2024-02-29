@@ -17,12 +17,10 @@ public class PlayerClimbState : PlayerGroundState
         base.Enter();
         StartAnimation(animData.ClimbParameterHash);
 
-        bool test = player.Animator.GetBool(animData.ClimbParameterHash);
-
         Debug.Log("Climb Start");
 
         isClimbing = true;
-        controller.enabled = false; // 또는 base에서 조건 걸어서 수정?
+        player.SetPlayerControlEnabled(false);// 클라이밍 도중에 입력과 이동을 제한하기 위해서.
     }
 
     public override void Update()
@@ -42,7 +40,8 @@ public class PlayerClimbState : PlayerGroundState
         base.Exit();
         Debug.Log("Climb end");
         StopAnimation(animData.ClimbParameterHash);
-        controller.enabled = true;  // 아까 상태가 시작 될 때 컨트롤러를 껐으니 다시 켜줌
+
+        player.SetPlayerControlEnabled(true);// 클라이밍 도중에 입력과 이동 제한 해제
     }
 
     protected override void OnJumpStarted(InputAction.CallbackContext context)

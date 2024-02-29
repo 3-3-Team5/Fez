@@ -14,7 +14,7 @@ public enum CameraState
 public class CemeraController : MonoBehaviour
 {
     [SerializeField] Transform target;
-    PlayerInput input;
+    Player player;
 
     CinemachineBrain brain;
     CinemachineVirtualCamera[] vcams;
@@ -31,12 +31,14 @@ public class CemeraController : MonoBehaviour
         vcams = vcamsPref.GetComponentsInChildren<CinemachineVirtualCamera>();
         VCamsInit();
 
-        input = target.parent.gameObject.GetComponent<PlayerInput>();
+        player = target.parent.gameObject.GetComponent<Player>();
+
+        RayCastData.PlayerCameraPivotPosY = target.localPosition.y;
     }
 
     private void Start()
     {
-        input.PlayerActions.CameraMove.started += CameraMove_Started;
+        player.Input.PlayerActions.CameraMove.started += CameraMove_Started;
     }
 
     private void Update()
@@ -52,7 +54,6 @@ public class CemeraController : MonoBehaviour
         {
             OnBlendCompleted(); // 끝났으니 제한 해제
         }
-
     }
 
     void VCamsInit()
@@ -97,15 +98,15 @@ public class CemeraController : MonoBehaviour
     {
         // 블렌딩이 시작 되었으니 PlayerInput 끄기
         isBlending = true;
-        input.enabled = false;
-        Debug.Log("Blending Start");
+        player.SetPlayerControlEnabled(false);
+        //Debug.Log("Blending Start");
     }
 
     private void OnBlendCompleted()
     {
         // 블렌딩이 완료 되었으니 PlayerInput 켜기
         isBlending = false;
-        input.enabled = true;
-        Debug.Log("Blending Completed");
+        player.SetPlayerControlEnabled(true);
+        //Debug.Log("Blending Completed");
     }
 }

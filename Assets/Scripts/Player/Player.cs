@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.PackageManager;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
+using UnityEngine.TextCore.Text;
 
 public class Player : MonoBehaviour
 {
@@ -34,6 +36,8 @@ public class Player : MonoBehaviour
         ForceReceiver = GetComponent<ForceReceiver>();
 
         stateMachine = new(this);
+
+        //UnderFootPivot = 3.0f + 0.7f;
     }
 
     void Start()
@@ -54,6 +58,12 @@ public class Player : MonoBehaviour
         //Debug.Log($"Current State : {stateMachine.GetCurState()}");
     }
 
+    public void SetPlayerControlEnabled(bool active)
+    {
+        Controller.enabled = active;
+        Input.enabled = active;
+    }
+
     private void OnDrawGizmos()
     {
         Vector3 direction = Camera.main.transform.right * transform.localScale.x;
@@ -68,5 +78,11 @@ public class Player : MonoBehaviour
 
             Gizmos.DrawRay(transform.position - modifier, direction * layDistance);
         }
+
+        Vector3 down = Camera.main.transform.position + (Vector3.down * RayCastData.DownPivot);
+        Gizmos.DrawRay(down, Camera.main.transform.forward * RayCastData.RayFromCameraDistance);
+
+        Vector3 up = Camera.main.transform.position + (Vector3.up * RayCastData.UpPivot);
+        Gizmos.DrawRay(up, Camera.main.transform.forward * RayCastData.RayFromCameraDistance);
     }
 }
