@@ -20,6 +20,8 @@ public class PlayerBaseState : IState
     private float slideTimer = 0f;
     protected float slidingSpeed = 2f;
 
+    
+
 
     public PlayerBaseState(PlayerStateMachine playerStateMachine)
     {
@@ -34,6 +36,7 @@ public class PlayerBaseState : IState
     public virtual void Enter()
     {
         AddInputActionsCallbacks(); // ��ǲ ó���� ���� �̺�Ʈ �߰�
+        
     }
 
     public virtual void Exit()
@@ -71,7 +74,7 @@ public class PlayerBaseState : IState
 
         if (movementDirection != Vector3.zero)
         {
-            player.slideDir = movementDirection.x * Camera.main.transform.right;
+            player.slideDir = movementDirection.x * player.mainCamera.transform.right;
         }
 
         Move(movementDirection);
@@ -82,9 +85,7 @@ public class PlayerBaseState : IState
     {
         float movementSpeed = player.GetMoveSpeed;
 
-        Vector3 cameraRight = Camera.main.transform.right;
-
-        movementDirection = cameraRight * movementDirection.x; // ī�޶� �������� �̵� ������ ����
+        movementDirection = player.mainCamera.transform.right * movementDirection.x; // ī�޶� �������� �̵� ������ ����
         
         // ��/�� �̵� - movementDirection , ��/��(����, �߷�) - ForceReceiver.Movement
         Vector3 finalMovement = movementDirection * movementSpeed + player.ForceReceiver.Movement + player.knockbackDir;
@@ -118,7 +119,7 @@ public class PlayerBaseState : IState
 
     private void LookRotation(Vector3 movementDirection)
     {
-        Transform cameraTransform = Camera.main.transform;
+        Transform cameraTransform = player.mainCamera.transform;
         // ī�޶��� ��ġ�� �������� ĳ���Ͱ� �ٶ� ���� ���
         Vector3 direction = cameraTransform.position - player.transform.position;
         direction.y = 0; // ���� �ٶ󺸰� �ϱ� ���ؼ�

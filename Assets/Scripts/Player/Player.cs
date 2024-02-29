@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine.Utility;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -19,13 +20,14 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public bool isslipped = false;
     [HideInInspector] public Vector3 slideDir = Vector3.zero;
-    [HideInInspector]public Vector3 knockbackDir = Vector3.zero;
+    [HideInInspector] public Vector3 knockbackDir = Vector3.zero;
 
     public bool isKnockback = false;
 
     public float knockbackPower;
-    
-    
+
+    public Camera mainCamera;
+
 
     PlayerStateMachine stateMachine;
 
@@ -43,6 +45,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         stateMachine.ChangeState(stateMachine.IdleState);
+        mainCamera = Camera.main;
     }
 
     void Update()
@@ -70,15 +73,25 @@ public class Player : MonoBehaviour
                 disappearBlock.StartAnim();
         }
 
+        //두개 겹치는 경우 태그와 레이어로 관리해보자. 
         if (1 << hit.gameObject.layer == 1 << LayerMask.NameToLayer("Trap"))
         {
             if (!isKnockback)
             {
+                Vector3 cameraRightabs = mainCamera.transform.right.Abs(); //Camera.main 캐싱해서 사용 Abs
                 isKnockback = true;
-                //TODO : 힘을 받아 넉백되는 동작 구현하기 1. ForceReceiver 2. PlayerBaseState
                 Vector3 knockback = (hit.point - hit.collider.bounds.center).normalized;
-                Vector3 cameraRight = Camera.main.transform.right;
-                knockbackDir = cameraRight.x == 0 ? ((knockback.z * cameraRight)+ knockback.y*Vector3.up)*knockbackPower : ((knockback.x * cameraRight)+ knockback.y*Vector3.up)*knockbackPower;                
+                //카메라에 귀속되는게 아니라 충돌에 귀속되게 코드를 작성해야한다.
+                //4방향을 체크해서 스위치를 돌리수도 있고, 카메라가 어떤 카메라인지 알고 해야함. 
+                //knockbackDir = cameraRight.x == 0 ? ((knockback.z * cameraRight)+ knockback.y*Vector3.up)*knockbackPower : ((knockback.x * cameraRight)+ knockback.y*Vector3.up)*knockbackPower;
+                if (cameraRightabs.x > cameraRightabs.z)
+                {
+                    knockbackDir = ((knockback.x * cameraRightabs) + knockback.y * Vector3.up) * knockbackPower;
+                }
+                else
+                {
+                    knockbackDir = ((knockback.z * cameraRightabs) + knockback.y * Vector3.up) * knockbackPower;
+                }
             }
         }
     }

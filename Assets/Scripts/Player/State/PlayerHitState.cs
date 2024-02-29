@@ -30,7 +30,6 @@ public class PlayerHitState : PlayerBaseState
     public override void Update()
     {
         base.Update();
-        //enddir = Vector3.Lerp(enddir, Vector3.zero, currenttime/needtime);
         player.knockbackDir = Vector3.Lerp(startdir, Vector3.zero, currenttime/needtime);
         currenttime += Time.deltaTime;
 
