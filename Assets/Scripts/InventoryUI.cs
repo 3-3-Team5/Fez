@@ -15,10 +15,15 @@ public class InventoryUI : MonoBehaviour
     private GameObject itemSlots;
     private int oldIndex;
     private GameObject draggedItemIcon;
+    private GridLayoutGroup gridLayoutGroup;
+    private Vector2 puzzleClearSpacing = new Vector2(0, 0);
+    private Vector2 puzzleStartSpacing = new Vector2(20, 20);
+    private float puzzleClearDuration = 2.0f;
 
     private void Awake()
     {
         inventory = player.inventory;
+        gridLayoutGroup = itemSlots.GetComponent<GridLayoutGroup>();
     }
     private void Start()
     {
@@ -28,6 +33,7 @@ public class InventoryUI : MonoBehaviour
     private void OnEnable()
     {
         UpdateUI();
+        StartCoroutine(PuzzleClearCheck());
     }
     private void InitializeInventorySlots()
     {
@@ -129,5 +135,21 @@ public class InventoryUI : MonoBehaviour
             else
                 itemSlots.transform.GetChild(i).GetComponent<Image>().sprite = Resources.Load<Sprite>(inventory._items[i].itemId.ToString());
         }
+    }
+
+    private IEnumerator PuzzleClearCheck()
+    {
+        float time = 0f;
+
+        while (time < puzzleClearDuration)
+        {
+            time += Time.deltaTime;
+            float t = time / puzzleClearDuration;
+            gridLayoutGroup.spacing = Vector2.Lerp(puzzleStartSpacing, puzzleClearSpacing, t);
+
+            yield return null;
+        }
+
+        gridLayoutGroup.spacing = puzzleClearSpacing;
     }
 }
