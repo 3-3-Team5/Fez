@@ -173,7 +173,7 @@ Transform:
   - {fileID: 5111793608112791181}
   - {fileID: 7961168901127100433}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &6351836821641899314
 CharacterController:
@@ -235,6 +235,12 @@ MonoBehaviour:
     airParameterName: '@Air'
     jumpParameterName: Jump
     fallParameterName: Fall
+  isslipped: 0
+  slideDir: {x: 0, y: 0, z: 0}
+  knockbackDir: {x: 0, y: 0, z: 0}
+  isKnockback: 0
+  knockbackPower: 10
+  mainCamera: {fileID: 0}
 --- !u!114 &5175138767430840550
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -17,9 +17,16 @@ public class PlayerGroundState : PlayerBaseState
     public override void Update()
     {
         base.Update();
+        
         if (player.isKnockback)
         {
             stateMachine.ChangeState(stateMachine.HitState);
+            return;
+        }
+
+        if (player.isWarp)
+        {
+            stateMachine.ChangeState(stateMachine.WarpState);
             return;
         }
 

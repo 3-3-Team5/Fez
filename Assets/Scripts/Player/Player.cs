@@ -22,11 +22,14 @@ public class Player : MonoBehaviour
     [HideInInspector] public Vector3 slideDir = Vector3.zero;
     [HideInInspector] public Vector3 knockbackDir = Vector3.zero;
 
-    public bool isKnockback = false;
+    [HideInInspector] public bool isKnockback = false;
+
+    [HideInInspector] public bool isWarp = false;
+    [HideInInspector] public Transform warpPos;
 
     public float knockbackPower;
 
-    public Camera mainCamera;
+    [HideInInspector] public Camera mainCamera;
 
 
     PlayerStateMachine stateMachine;
@@ -56,7 +59,8 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        stateMachine.PhysicsUpdate();
+        if (!isWarp)
+            stateMachine.PhysicsUpdate();
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit) //미끄러짐 구현에 필요한 메서드
@@ -94,5 +98,11 @@ public class Player : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void Warp(Transform warpTransform)
+    {
+        warpPos = warpTransform;
+        isWarp = true;
     }
 }
