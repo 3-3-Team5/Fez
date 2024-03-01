@@ -12,7 +12,15 @@ public class PortalBlock : MonoBehaviour
         
         if (other.gameObject.TryGetComponent<Player>(out Player player))
         {
-            player.Warp(warpPos);
+            player.WarpIn(warpPos);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.TryGetComponent<Player>(out Player player))
+        {
+            player.WarpOut();
         }
     }
 }

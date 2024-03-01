@@ -33,7 +33,6 @@ public class PlayerWarpState : PlayerGroundState
         //if (player.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
         if (time >=1f)
         {
-            Debug.Log("Start");
             if (warp)
             {
                 player.gameObject.transform.position = player.warpPos.position;
@@ -43,7 +42,7 @@ public class PlayerWarpState : PlayerGroundState
         
         if (time >= 2f)
         {
-            Debug.Log("End");
+            
             stateMachine.ChangeState(stateMachine.IdleState);
         }
             

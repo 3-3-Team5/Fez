@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Cinemachine.Utility;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
@@ -100,9 +101,25 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void Warp(Transform warpTransform)
+    public void WarpIn(Transform warpTransform)
     {
         warpPos = warpTransform;
-        isWarp = true;
+        Input.PlayerActions.Interactionportal.started += OnWarpStart;
+        Debug.Log("WarpIn");
+    }
+
+    public void WarpOut()
+    {
+        warpPos = null;
+        Input.PlayerActions.Interactionportal.started -= OnWarpStart;
+        Debug.Log("WarpOut");
+    }
+
+    public void OnWarpStart(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started)
+        {
+            isWarp = true;
+        }
     }
 }
