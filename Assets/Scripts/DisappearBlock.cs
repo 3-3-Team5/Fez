@@ -12,7 +12,6 @@ public class DisappearBlock : MonoBehaviour
     [SerializeField] private float resettingTime;
     private Color originColor;
     private Color endColor;
-    private float checkTime =0f;
     [HideInInspector]public bool isTouch = false;
     
     void Start()

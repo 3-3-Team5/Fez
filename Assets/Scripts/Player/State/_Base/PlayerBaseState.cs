@@ -76,7 +76,6 @@ public class PlayerBaseState : IState
         {
             player.slideDir = movementDirection.x * player.mainCamera.transform.right;
         }
-
         Move(movementDirection);
         LookRotation(movementDirection);
     }

@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class PlayerHitState : PlayerBaseState
 {
-    private float needtime = 1f;
-    private float currenttime = 0f;
     private Vector3 startdir;
+    private float needTime = 0.7f;
+    private float currentTime = 0f;
     
-
     public PlayerHitState(PlayerStateMachine playerStateMachine) : base(playerStateMachine)
     {
     }
@@ -18,25 +17,26 @@ public class PlayerHitState : PlayerBaseState
         base.Enter();
         stateMachine.Player.moveSpeedModifier = 0f; // 이렇게하면 움직임 제한.
         startdir = player.knockbackDir;
-        //StartAnimation(animData.HitParameterHash);
+        StartAnimation(animData.HitParameterHash);
     }
 
     public override void Exit()
     {
         base.Exit();
-        //StopAnimation(animData.HitParameterHash);
+        StopAnimation(animData.HitParameterHash);
     }
 
     public override void Update()
     {
         base.Update();
-        player.knockbackDir = Vector3.Lerp(startdir, Vector3.zero, currenttime/needtime);
-        currenttime += Time.deltaTime;
+        currentTime += Time.deltaTime;
+        player.knockbackDir = Vector3.Lerp(startdir, Vector3.zero,currentTime/needTime);
+        
 
-        if (currenttime >= needtime)
+        if (currentTime/needTime>=1f)
         {
-            currenttime = 0f;
             player.isKnockback = false;
+            currentTime = 0f;
             player.moveSpeedModifier = 1f;
             if (controller.velocity.y < 0)
             {

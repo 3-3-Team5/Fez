@@ -15,7 +15,7 @@ public class PlayerWarpState : PlayerGroundState
     public override void Enter()
     {
         base.Enter();
-        //StartAnimation();
+        StartAnimation(player.AnimationData.DoorEnterParameterHash);
         warp = true;
         time = 0;
     }
@@ -23,26 +23,27 @@ public class PlayerWarpState : PlayerGroundState
     public override void Exit()
     {
         base.Exit();
-        //StopAnimation();
+        StopAnimation(player.AnimationData.DoorExitParameterHash);
         player.isWarp = false;
     }
 
     public override void Update()
     {
         time += Time.deltaTime;
-        //if (player.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1)
-        if (time >=1f)
+        //if (time >=1f)
+        if (player.Animator.GetCurrentAnimatorStateInfo(0).IsName("Player_Enter") &&player.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
         {
             if (warp)
             {
                 player.gameObject.transform.position = player.warpPos.position;
                 warp = false;
+                StopAnimation(player.AnimationData.DoorEnterParameterHash);
+                StartAnimation(player.AnimationData.DoorExitParameterHash);
             }
         }
         
-        if (time >= 2f)
+        if (player.Animator.GetCurrentAnimatorStateInfo(0).IsName("Player_Exit")  && player.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
         {
-            
             stateMachine.ChangeState(stateMachine.IdleState);
         }
             
