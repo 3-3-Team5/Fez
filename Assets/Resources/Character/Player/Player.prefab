@@ -251,8 +251,7 @@ MonoBehaviour:
     airParameterName: '@Air'
     jumpParameterName: Jump
     fallParameterName: Fall
-  layDistance: 0.7
-  climbableDistance: 0.6
+  isVisible: 0
 --- !u!114 &5175138767430840550
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -406,7 +405,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8886452025532821925}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.2, z: 0}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children: []

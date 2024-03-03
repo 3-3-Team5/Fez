@@ -17,7 +17,7 @@ public class PlayerClimbState : PlayerGroundState
         base.Enter();
         StartAnimation(animData.ClimbParameterHash);
 
-        Debug.Log("Climb Start");
+        //Debug.Log("Climb Start");
 
         isClimbing = true;
         player.SetPlayerControlEnabled(false);// 클라이밍 도중에 입력과 이동을 제한하기 위해서.
@@ -38,7 +38,7 @@ public class PlayerClimbState : PlayerGroundState
     public override void Exit()
     {
         base.Exit();
-        Debug.Log("Climb end");
+        //Debug.Log("Climb end");
         StopAnimation(animData.ClimbParameterHash);
 
         player.SetPlayerControlEnabled(true);// 클라이밍 도중에 입력과 이동 제한 해제
