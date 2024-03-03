@@ -18,4 +18,8 @@ public struct RayCastData
 
     public static float DownPivot => PlayerCameraPivotPosY + PlayerUnderFoot;
     public static float UpPivot => -PlayerCameraPivotPosY + PlayerOverHead;
+    public static float CameraToPlayerDis => 20f;
+    public static float PlayerFrontPivot => 0.4f;
+
+    public static float ClimbableDistance = .6f; // Lay충돌 지점과 최상단의 거리로 Climbable을 판단 할때 사용하는 기준값
 }

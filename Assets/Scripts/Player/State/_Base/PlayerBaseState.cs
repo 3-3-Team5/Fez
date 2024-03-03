@@ -47,6 +47,9 @@ public class PlayerBaseState : IState
     public virtual void Update()
     {
         Move();
+
+        //if (stateMachine.GetCurState() != stateMachine.IdleState)
+        CheckVisible();
     }
 
     protected virtual void AddInputActionsCallbacks()
@@ -113,7 +116,7 @@ public class PlayerBaseState : IState
         stateMachine.MovementInput = input.PlayerActions.Move.ReadValue<Vector2>();
     }
 
-    private Vector2 GetMovementDirection()
+    protected Vector2 GetMovementDirection()
     {
         return stateMachine.MovementInput;
     }
@@ -131,5 +134,68 @@ public class PlayerBaseState : IState
     protected void StopAnimation(int animationHash)
     {
         stateMachine.Player.Animator.SetBool(animationHash, false);
+    }
+
+    void CheckVisible()
+    {
+        // 카메라에서 캐릭터의 하단 지점으로 레이캐스트를 해야함 : 카메라 피벗의 높이 + 발 아래 = RayCastData.DownPivot
+        Vector3 cameraPos = Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY);
+        Ray ray = new Ray(cameraPos, player.transform.position - cameraPos);
+        RaycastHit hit;
+
+        // 레이캐스트 수행
+        LayerMask targetLayer = LayerData.Ground | LayerData.Wall;
+        if (Physics.Raycast(ray, out hit, RayCastData.CameraToPlayerDis, targetLayer))
+        {
+            // 땅이나 벽이 Player의 앞에 있다면.
+            player.isVisible = false;
+        }
+        else
+            player.isVisible = true;
+    }
+
+    protected Vector3 InitPlayerPosModifier(Vector3 modifier)
+    {
+        modifier.y = 0f; //y축은 변경이 없어야함.
+        modifier.Normalize();
+        modifier = modifier * (controller.radius + 0.2f); // 방향 * 플레이어의 콜라이더의 반지름 만큼 앞으로 땡겨옴
+
+        return modifier;
+    }
+
+    protected void CheckFront()
+    {
+        // 카메라에서 캐릭터의 정면으로 레이캐스트
+        Vector3 rayStartPos = Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY); // 중심점
+        // 플레이어의 진행방향으로부터 일정 수치만큼의 앞에 있는 지점
+        Vector3 PlayerFornt = (Camera.main.transform.right * player.transform.localScale.x) * RayCastData.PlayerFrontPivot;
+        rayStartPos += PlayerFornt; // Player의 정면으로 방향 조절
+
+        Ray ray = new Ray(rayStartPos, Camera.main.transform.forward);
+        RaycastHit hit;
+
+        // 레이캐스트 수행
+        LayerMask targetLayer = LayerData.Ground | LayerData.Wall;
+        if (Physics.Raycast(ray, out hit, RayCastData.RayFromCameraDistance, targetLayer))
+        {
+            hit.point -= PlayerFornt; // 실제 충돌지점은 플레이어의 위치보다 살짝 앞쪽이니까 더해준만큼 다시 뻄
+            Vector3 modifier = Camera.main.transform.position - player.transform.position; // 카메라의 방향
+            modifier = InitPlayerPosModifier(modifier); // 수정자 초기화
+
+            // x,z 축이 일정 수치 이상 차이난다면 변경시켜야함
+            Vector3 newPos = player.transform.position;
+            bool absX = Mathf.Abs(player.transform.position.x - hit.point.x) > controller.radius;
+            bool absZ = Mathf.Abs(player.transform.position.z - hit.point.z) > controller.radius;
+
+            // x or z 축의 변경값이 0.4보다 크다면 캐릭터의 위치 변경
+            if (absX || absZ)
+            {
+                newPos.x = absX ? hit.point.x : newPos.x;
+                newPos.z = absZ ? hit.point.z : newPos.z;
+                player.transform.position = newPos + modifier;
+
+                Debug.Log("Move");
+            }
+        }
     }
 }

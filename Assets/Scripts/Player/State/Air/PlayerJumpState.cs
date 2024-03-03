@@ -32,7 +32,8 @@ public class PlayerJumpState : PlayerAirState
     {
         base.PhysicsUpdate();
 
-        CheckOverHead();
+        if (player.isVisible)
+            CheckOverHead();
     }
 
     public override void Exit()
@@ -50,17 +51,18 @@ public class PlayerJumpState : PlayerAirState
         RaycastHit hit;
 
         // 레이캐스트 수행
-        if (Physics.Raycast(ray, out hit, RayCastData.RayFromCameraDistance,
-            LayerData.Ground | LayerData.Wall))
+        LayerMask targetLayer = LayerData.Ground | LayerData.Wall;
+        if (!player.isVisible) // Player가 보이고 있지 않다면 벽 앞으로 땡겨오는건 하지 않게.
+            targetLayer = LayerData.Ground;
+
+        if (Physics.Raycast(ray, out hit, RayCastData.RayFromCameraDistance, targetLayer))
         {
             Vector3 modifier = Camera.main.transform.position - player.transform.position; // 카메라의 방향
-            modifier.y = 0f; //y축은 변경이 없어야함.
-            modifier.Normalize();
-            modifier = modifier * (controller.radius + 0.1f); // 방향 * 플레이어의 콜라이더의 반지름 만큼 앞으로 땡겨옴
-            // 이제 여기서 캐릭터의 위치를 옮기면 될듯
+            modifier = InitPlayerPosModifier(modifier); // 수정자 초기화
+
+            // 이제 여기서 캐릭터의 위치 변경
             player.transform.position = new Vector3(hit.point.x, player.transform.position.y, hit.point.z) + modifier;
-            //Debug.Log($"Change : {hit.transform.name}, Layer : {hit.transform.gameObject.layer}");
-            //Debug.Log($"Change : {player.transform.position}, Hit : {hit.point}");
+            Debug.Log("Jump");
         }
     }
 }

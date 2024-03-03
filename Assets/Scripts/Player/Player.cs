@@ -22,9 +22,7 @@ public class Player : MonoBehaviour
     [field: SerializeField] public PlayerAnimationData AnimationData { get; private set; }
 
     PlayerStateMachine stateMachine;
-
-    public float layDistance = .7f; // Climb시 전방으로 쏠 Lay의 거리
-    public float climbableDistance = .6f; // Lay충돌 지점과 최상단의 거리로 Climbable을 판단 할때 사용하는 기준값
+    public bool isVisible;
 
     private void Awake()
     {
@@ -66,23 +64,33 @@ public class Player : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        Vector3 direction = Camera.main.transform.right * transform.localScale.x;
+        Gizmos.color = Color.green;
 
-        Gizmos.color = Color.red;
-
+        Vector3 front = Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY);
+        front += (Camera.main.transform.right * transform.localScale.x) * RayCastData.PlayerFrontPivot;
         // 레이 그리기
         for (int i = 0; i < 3; ++i)
         {
             Vector3 modifier = Vector3.zero;
             modifier.y += i * 0.2f;
 
-            Gizmos.DrawRay(transform.position - modifier, direction * layDistance);
+            Gizmos.DrawRay(front - modifier, Camera.main.transform.forward * RayCastData.RayFromCameraDistance);
         }
+
+        Gizmos.color = Color.red;
 
         Vector3 down = Camera.main.transform.position + (Vector3.down * RayCastData.DownPivot);
         Gizmos.DrawRay(down, Camera.main.transform.forward * RayCastData.RayFromCameraDistance);
 
         Vector3 up = Camera.main.transform.position + (Vector3.up * RayCastData.UpPivot);
         Gizmos.DrawRay(up, Camera.main.transform.forward * RayCastData.RayFromCameraDistance);
+
+        Vector3 center = Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY);
+        Gizmos.DrawRay(center, transform.position - center);
+
+        // 기즈모 에러는 그냥 실행중이 아닐 때 인풋값 가져오려해서 그럼
+        //Gizmos.DrawRay(front, Camera.main.transform.forward * RayCastData.RayFromCameraDistance);
+
+        //Gizmos.DrawRay(transform.forward, transform.forward * 10f);
     }
 }
