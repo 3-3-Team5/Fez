@@ -83,6 +83,8 @@ public class PlayerBaseState : IState
         // 특정 수보다 작으면 그냥 0으로 처리
         if (Mathf.Abs(finalMovement.x) < 1e-6f) // 1e-6f = 0.000001
             finalMovement.x = 0;
+        if (Mathf.Abs(finalMovement.z) < 1e-6f) // 1e-6f = 0.000001
+            finalMovement.z = 0;
 
         controller.Move(finalMovement * Time.deltaTime); // 움직임 지정
     }
@@ -158,7 +160,7 @@ public class PlayerBaseState : IState
     {
         modifier.y = 0f; //y축은 변경이 없어야함.
         modifier.Normalize();
-        modifier = modifier * (controller.radius + 0.2f); // 방향 * 플레이어의 콜라이더의 반지름 만큼 앞으로 땡겨옴
+        modifier = modifier * (controller.radius + 0.3f); // 방향 * 플레이어의 콜라이더의 반지름 만큼 앞으로 땡겨옴
 
         return modifier;
     }
@@ -192,10 +194,30 @@ public class PlayerBaseState : IState
             {
                 newPos.x = absX ? hit.point.x : newPos.x;
                 newPos.z = absZ ? hit.point.z : newPos.z;
-                player.transform.position = newPos + modifier;
 
-                Debug.Log("Move");
+                CheckSpaceAvailability(newPos + modifier, controller);
             }
+        }
+    }
+
+    // 이동 할 공간이 Player가 들어 갈 수 있는지 확인
+    public bool CheckSpaceAvailability(Vector3 targetPosition, CharacterController controller)
+    {
+        Vector3 colliderSize = new Vector3(controller.radius * 2, controller.height, controller.radius * 2);
+
+        LayerMask targetLayer = LayerData.Ground | LayerData.Wall;
+        Collider[] hitColliders = Physics.OverlapBox(targetPosition + controller.center, colliderSize / 2, Quaternion.identity, targetLayer);
+        if (hitColliders.Length > 0)
+        {
+            //Debug.Log("Can't Move");
+            return false;
+        }
+        else
+        {
+            // 공간이 비어 있음
+            //Debug.Log("Can Move");
+            player.transform.position = targetPosition;
+            return true;
         }
     }
 }

@@ -7,6 +7,7 @@ using UnityEngine.InputSystem.HID;
 
 public class PlayerAirState : PlayerBaseState
 {
+    protected bool frontCheck = true;
     public PlayerAirState(PlayerStateMachine playerStateMachine) : base(playerStateMachine) { }
 
     public override void Enter()
@@ -14,19 +15,27 @@ public class PlayerAirState : PlayerBaseState
         base.Enter();
 
         StartAnimation(animData.AirParameterHash);
+        frontCheck = true;
+    }
+
+    public override void Update()
+    {
+        base.Update();
+
+        if (player.isVisible) // Player가 처음부터 가려져 있는 상태라면 앞으로 땡겨오지 않아야함.
+        {
+            if (stateMachine.MovementInput != Vector2.zero && frontCheck)
+            {
+                CheckFront();
+            }
+        }
     }
 
     public override void PhysicsUpdate()
     {
         base.PhysicsUpdate();
 
-        if (player.isVisible) // Player가 처음부터 가려져 있는 상태라면 앞으로 땡겨오지 않아야함.
-        {
-            if (stateMachine.MovementInput != Vector2.zero)
-            {
-                CheckFront();
-            }
-        }
+
     }
 
     public override void Exit()

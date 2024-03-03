@@ -14,7 +14,7 @@ public struct RayCastData
 
     public static float PlayerCameraPivotPosY = 3f;
     public static float PlayerUnderFoot = 1f;
-    public static float PlayerOverHead = 1.2f;
+    public static float PlayerOverHead = 1f;
 
     public static float DownPivot => PlayerCameraPivotPosY + PlayerUnderFoot;
     public static float UpPivot => -PlayerCameraPivotPosY + PlayerOverHead;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerJumpState : PlayerAirState
 {
-
+    
     public PlayerJumpState(PlayerStateMachine playerStateMachine) : base(playerStateMachine) { }
 
     public override void Enter()
@@ -30,10 +30,10 @@ public class PlayerJumpState : PlayerAirState
 
     public override void PhysicsUpdate()
     {
-        base.PhysicsUpdate();
-
         if (player.isVisible)
             CheckOverHead();
+
+        base.PhysicsUpdate();
     }
 
     public override void Exit()
@@ -60,9 +60,20 @@ public class PlayerJumpState : PlayerAirState
             Vector3 modifier = Camera.main.transform.position - player.transform.position; // 카메라의 방향
             modifier = InitPlayerPosModifier(modifier); // 수정자 초기화
 
+            Vector3 newPos = player.transform.position;
+            bool absX = Mathf.Abs(player.transform.position.x - hit.point.x) > controller.radius;
+            bool absZ = Mathf.Abs(player.transform.position.z - hit.point.z) > controller.radius;
             // 이제 여기서 캐릭터의 위치 변경
-            player.transform.position = new Vector3(hit.point.x, player.transform.position.y, hit.point.z) + modifier;
-            Debug.Log("Jump");
+            if (absX || absZ)
+            {
+                newPos.x = absX ? hit.point.x : newPos.x;
+                newPos.z = absZ ? hit.point.z : newPos.z;
+
+                CheckSpaceAvailability(newPos + modifier, controller);
+            }
+            frontCheck = false;
         }
+        else
+            frontCheck = true;
     }
 }

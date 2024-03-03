@@ -73,7 +73,12 @@ public class PlayerFallState : PlayerAirState
             bool absZ = Mathf.Abs(player.transform.position.z - closetPoint.z) > controller.radius;
             // 캐릭터의 위치 변경
             if (absX || absZ)
-                player.transform.position = closetPoint + modifier;
+            {
+                closetPoint.x = absX ? closetPoint.x : player.transform.position.x;
+                closetPoint.z = absZ ? closetPoint.z : player.transform.position.z;
+
+                CheckSpaceAvailability(closetPoint + modifier, controller);
+            }
         }
     }
 }
