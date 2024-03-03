@@ -189,7 +189,7 @@ public class PlayerBaseState : IState
             bool absX = Mathf.Abs(player.transform.position.x - hit.point.x) > controller.radius;
             bool absZ = Mathf.Abs(player.transform.position.z - hit.point.z) > controller.radius;
 
-            // x or z 축의 변경값이 0.4보다 크다면 캐릭터의 위치 변경
+            // x or z 축의 변경값이 radius보다 크다면 캐릭터의 위치 변경
             if (absX || absZ)
             {
                 newPos.x = absX ? hit.point.x : newPos.x;
