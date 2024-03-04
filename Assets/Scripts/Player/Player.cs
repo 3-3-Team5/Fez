@@ -25,6 +25,9 @@ public struct SaveTransform
         position = transform.position;
         rotation = transform.rotation;
         localScale = transform.localScale;
+
+        position.x += localScale.x * -0.3f; // 그냥 대충 반지름만큼 뒤로 가라는뜻
+        position.z += localScale.x * -0.3f;
     }
 }
 
@@ -78,7 +81,6 @@ public class Player : MonoBehaviour
 
         isDeath = false;
         saveTransform = new SaveTransform();
-        //UnderFootPivot = 3.0f + 0.7f;
     }
 
     void Start()
@@ -92,8 +94,9 @@ public class Player : MonoBehaviour
     void Update()
     {
         if (isDeath)
+        {
             return;
-        
+        }
 
         stateMachine?.HandleInput();
         stateMachine.Update();
@@ -145,7 +148,9 @@ public class Player : MonoBehaviour
     private void FixedUpdate()
     {
         if (isDeath)
+        {
             return;
+        }
 
         stateMachine.PhysicsUpdate();
 
@@ -157,6 +162,7 @@ public class Player : MonoBehaviour
         if (isDeath)
         {
             OnDeath?.Invoke();
+            isDeath = false;
         }
     }
 
@@ -227,6 +233,7 @@ public class Player : MonoBehaviour
 
         #endregion
 
+
         #region 사라지는 발판
 
         if (hit.gameObject.TryGetComponent<DisappearBlock>(out DisappearBlock disappearBlock))
@@ -238,12 +245,12 @@ public class Player : MonoBehaviour
         #endregion
 
         #region 넉백
-         
+
         if (1 << hit.gameObject.layer == 1 << LayerMask.NameToLayer("Trap"))
         {
             if (!isKnockback)
             {
-                Vector3 cameraRightabs = mainCamera.transform.right.Abs(); 
+                Vector3 cameraRightabs = mainCamera.transform.right.Abs();
                 isKnockback = true;
                 Vector3 knockback = (hit.point - hit.collider.bounds.center).normalized;
                 if (cameraRightabs.x > cameraRightabs.z)
@@ -286,7 +293,7 @@ public class Player : MonoBehaviour
 
     #endregion
 
-    void ReSpawn()
+    public void ReSpawn()
     {
         Controller.enabled = false;
 
@@ -295,8 +302,13 @@ public class Player : MonoBehaviour
         gameObject.transform.localScale = saveTransform.localScale;
 
         ForceReceiver.verticalVelocity = 0;
+        isDeath = false;
 
-        isDeath = false; // 애니메이션이 추가된다면 애니메이션이 끝난 후 이 값을 변경하면 될듯
-        Controller.enabled = true;
+        Animator.SetTrigger(AnimationData.DieParameterHash);
+    }
+
+    public void SetIdleState()
+    {
+        stateMachine.ChangeState(stateMachine.IdleState);
     }
 }

@@ -17,6 +17,8 @@ public class PlayerAnimationData
     [SerializeField] private string DoorEnterParameterName = "Enter";
     [SerializeField] private string DoorExitParameterName = "Exit";
 
+    [SerializeField] private string DieParameterName = "Die";
+
     //TODO : 넉백이랑 포탈이동 관련한 애니메이션 데이터 추가해야함. (애니메이션 파라미터 + 애니메이션 등등)
     public int GroundParameterHash { get; private set; }
     public int IdleParameterHash { get; private set; }
@@ -30,6 +32,9 @@ public class PlayerAnimationData
     public int HitParameterHash { get; private set; }
     public int DoorEnterParameterHash { get; private set; }
     public int DoorExitParameterHash { get; private set; }
+
+    public int DieParameterHash { get; private set; }
+
 
     public void Initialize()
     {
@@ -45,5 +50,7 @@ public class PlayerAnimationData
         HitParameterHash = Animator.StringToHash(HitParameterName);
         DoorEnterParameterHash = Animator.StringToHash(DoorEnterParameterName);
         DoorExitParameterHash = Animator.StringToHash(DoorExitParameterName);
+
+        DieParameterHash = Animator.StringToHash(DieParameterName);
     }
 }

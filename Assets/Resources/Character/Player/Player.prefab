@@ -254,15 +254,27 @@ MonoBehaviour:
     HitParameterName: Hit
     DoorEnterParameterName: Enter
     DoorExitParameterName: Exit
+    DieParameterName: Die
   isslipped: 0
   slideDir: {x: 0, y: 0, z: 0}
   knockbackDir: {x: 0, y: 0, z: 0}
   isKnockback: 0
   knockbackPower: 0
   isWarp: 0
-  warpPos: {fileID: 0}
+  warpPos: {x: 0, y: 0, z: 0}
   mainCamera: {fileID: 0}
   isVisible: 0
+  inventory:
+    _items:
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+    - {fileID: 0}
+  isDeath: 0
+  saveTransform:
+    position: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0, w: 0}
+    localScale: {x: 0, y: 0, z: 0}
 --- !u!114 &5175138767430840550
 MonoBehaviour:
   m_ObjectHideFlags: 0
