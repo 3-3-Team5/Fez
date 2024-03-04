@@ -229,6 +229,15 @@ public class setTile : MonoBehaviour
                             Instantiate(obj[blockNum], new Vector3(x, y , z - 0.5f), Quaternion.identity, transform);
                         }
                 break;
+            case 11:
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            if(y == MaxY - 1) Instantiate(obj[14], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
+                            else Instantiate(obj[blockNum], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
+                        }
+                break;
             case 12:
                 for (int x = StartX; x < MaxX; x++)
                     for (int z = StartZ; z < MaxZ; z++)
