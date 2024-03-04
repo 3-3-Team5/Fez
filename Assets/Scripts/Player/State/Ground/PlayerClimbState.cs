@@ -21,6 +21,7 @@ public class PlayerClimbState : PlayerGroundState
 
         isClimbing = true;
         player.SetPlayerControlEnabled(false);// 클라이밍 도중에 입력과 이동을 제한하기 위해서.
+        player.ForceReceiver.isStop = true;
     }
 
     public override void Update()
@@ -40,7 +41,7 @@ public class PlayerClimbState : PlayerGroundState
         base.Exit();
         //Debug.Log("Climb end");
         StopAnimation(animData.ClimbParameterHash);
-
+        player.ForceReceiver.isStop = false;
         player.SetPlayerControlEnabled(true);// 클라이밍 도중에 입력과 이동 제한 해제
     }
 
