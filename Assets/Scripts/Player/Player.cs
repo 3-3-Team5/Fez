@@ -9,6 +9,8 @@ using UnityEngine.TextCore.Text;
 using Unity.VisualScripting;
 using Cinemachine.Utility;
 using UnityEngine.InputSystem;
+using UnityEngine.Windows;
+using UnityEngine.UIElements;
 
 
 public class Player : MonoBehaviour
@@ -67,6 +69,28 @@ public class Player : MonoBehaviour
     {
         stateMachine?.HandleInput();
         stateMachine.Update();
+
+        Vector3 center = Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY);
+
+        if (UnityEngine.Input.GetKeyDown(KeyCode.X))
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(center, transform.position - center, out hit, RayCastData.RayFromCameraDistance))
+            {
+                if (hit.collider.TryGetComponent<ItemBox>(out ItemBox itemBox))
+                {
+                    itemBox.OpenBox();
+                }
+
+                if (hit.collider.TryGetComponent<ItemObject>(out ItemObject itemObject))
+                {
+                    inventory.AddItem(itemObject.itemData);
+
+                    itemObject.gameObject.SetActive(false);
+                }
+            }
+        }
+
     }
 
     private void FixedUpdate()

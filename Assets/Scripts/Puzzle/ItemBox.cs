@@ -11,11 +11,7 @@ public class ItemBox : MonoBehaviour
     private float dropHeight = 1f;
     private float dropDuration = 1f;
 
-    private void Start()
-    {
-        
-    }
-
+    /*
     private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -26,8 +22,9 @@ public class ItemBox : MonoBehaviour
             }
         }
     }
+    */
 
-    private void OpenBox()
+    public void OpenBox()
     {
         StartCoroutine(ItemDrop(dropItem));
     }
