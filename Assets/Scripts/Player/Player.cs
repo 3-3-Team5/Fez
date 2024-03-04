@@ -221,7 +221,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnControllerColliderHit(ControllerColliderHit hit) //미끄?���? 구현?�� ?��?��?�� 메서?��
+    private void OnControllerColliderHit(ControllerColliderHit hit) //OnColliderEnter 안됨
     {
         #region 미끄러움
 

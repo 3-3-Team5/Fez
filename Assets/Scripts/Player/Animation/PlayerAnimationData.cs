@@ -18,8 +18,7 @@ public class PlayerAnimationData
     [SerializeField] private string DoorExitParameterName = "Exit";
 
     [SerializeField] private string DieParameterName = "Die";
-
-    //TODO : 넉백이랑 포탈이동 관련한 애니메이션 데이터 추가해야함. (애니메이션 파라미터 + 애니메이션 등등)
+    
     public int GroundParameterHash { get; private set; }
     public int IdleParameterHash { get; private set; }
     public int MoveParameterHash { get; private set; }
