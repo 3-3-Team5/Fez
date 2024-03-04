@@ -13,6 +13,21 @@ using UnityEngine.Windows;
 using UnityEngine.UIElements;
 
 
+[Serializable]
+public struct SaveTransform
+{
+    public Vector3 position;
+    public Quaternion rotation;
+    public Vector3 localScale;
+
+    public void SetTransform(Transform transform)
+    {
+        position = transform.position;
+        rotation = transform.rotation;
+        localScale = transform.localScale;
+    }
+}
+
 public class Player : MonoBehaviour
 {
     [SerializeField] public CharacterSO stats; // baseStat
@@ -46,6 +61,10 @@ public class Player : MonoBehaviour
 
     public Inventory inventory = new Inventory(4);
 
+    public bool isDeath;
+    public Action OnDeath;
+    public SaveTransform saveTransform;
+
     private void Awake()
     {
         AnimationData.Initialize();
@@ -56,6 +75,8 @@ public class Player : MonoBehaviour
         ForceReceiver = GetComponent<ForceReceiver>();
         stateMachine = new(this);
 
+        isDeath = false;
+        saveTransform = new SaveTransform();
         //UnderFootPivot = 3.0f + 0.7f;
     }
 
@@ -63,10 +84,16 @@ public class Player : MonoBehaviour
     {
         stateMachine.ChangeState(stateMachine.IdleState);
         mainCamera = Camera.main;
+
+        OnDeath += ReSpawn;
     }
 
     void Update()
     {
+        if (isDeath)
+            return;
+        
+
         stateMachine?.HandleInput();
         stateMachine.Update();
 
@@ -116,9 +143,20 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (isDeath)
+            return;
+
         stateMachine.PhysicsUpdate();
 
         //Debug.Log($"Current State : {stateMachine.GetCurState()}");
+    }
+
+    private void LateUpdate()
+    {
+        if (isDeath)
+        {
+            OnDeath?.Invoke();
+        }
     }
 
     public void SetPlayerControlEnabled(bool active)
@@ -246,4 +284,18 @@ public class Player : MonoBehaviour
     }
 
     #endregion
+
+    void ReSpawn()
+    {
+        Controller.enabled = false;
+
+        gameObject.transform.position = saveTransform.position;
+        gameObject.transform.rotation = saveTransform.rotation;
+        gameObject.transform.localScale = saveTransform.localScale;
+
+        ForceReceiver.verticalVelocity = 0;
+
+        isDeath = false; // 애니메이션이 추가된다면 애니메이션이 끝난 후 이 값을 변경하면 될듯
+        Controller.enabled = true;
+    }
 }

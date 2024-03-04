@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+public struct CommonData
+{
+    public static readonly float DeathVelocity = -15f;
+}
 public struct LayerData
 {
     public static readonly LayerMask Ground = 1 << LayerMask.NameToLayer("Ground");

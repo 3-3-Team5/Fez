@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ForceReceiver : MonoBehaviour
 {
+    Player player;
     CharacterController controller;
 
     public float verticalVelocity;
@@ -12,6 +13,7 @@ public class ForceReceiver : MonoBehaviour
 
     private void Awake()
     {
+        player = GetComponent<Player>();
         controller = GetComponent<CharacterController>();
     }
 
@@ -24,6 +26,11 @@ public class ForceReceiver : MonoBehaviour
         else
         {
             verticalVelocity += Physics.gravity.y * Time.deltaTime;
+        }
+
+        if(verticalVelocity < CommonData.DeathVelocity)
+        {
+            player.isDeath = true;
         }
     }
 

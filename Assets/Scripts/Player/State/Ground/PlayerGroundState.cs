@@ -45,6 +45,8 @@ public class PlayerGroundState : PlayerBaseState
         base.Exit(); 
 
         StopAnimation(animData.GroundParameterHash);
+
+        player.saveTransform.SetTransform(player.transform);
     }
 
     protected override void OnJumpStarted(InputAction.CallbackContext context)

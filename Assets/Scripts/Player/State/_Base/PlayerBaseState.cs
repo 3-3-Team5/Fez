@@ -237,7 +237,6 @@ public class PlayerBaseState : IState
 
                 CheckSpaceAvailability(newPos + modifier, controller);
             }
-            Debug.Log(hit.point);
         }
     }
 
