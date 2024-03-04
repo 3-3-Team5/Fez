@@ -46,7 +46,7 @@ public class PlayerJumpState : PlayerAirState
     }
     void CheckOverHead()
     {
-        if (delay > 0.05f)
+        if (delay < 0.05f)
             return;
 
         // 카메라에서 캐릭터의 상단 지점으로 레이캐스트를 해야함
@@ -66,8 +66,8 @@ public class PlayerJumpState : PlayerAirState
             modifier = InitPlayerPosModifier(modifier); // 수정자 초기화
 
             Vector3 newPos = player.transform.position;
-            bool absX = Mathf.Abs(player.transform.position.x - hit.point.x) > controller.radius;
-            bool absZ = Mathf.Abs(player.transform.position.z - hit.point.z) > controller.radius;
+            bool absX = Mathf.Abs(player.transform.position.x - hit.point.x) > controller.radius + ModifierCollection.RadiusModifier;
+            bool absZ = Mathf.Abs(player.transform.position.z - hit.point.z) > controller.radius + ModifierCollection.RadiusModifier;
             // 이제 여기서 캐릭터의 위치 변경
             if (absX || absZ)
             {

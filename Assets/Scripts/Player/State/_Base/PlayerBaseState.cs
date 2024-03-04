@@ -226,8 +226,8 @@ public class PlayerBaseState : IState
 
             // x,z ���� ���� ��ġ �̻� ���̳��ٸ� ������Ѿ���
             Vector3 newPos = player.transform.position;
-            bool absX = Mathf.Abs(player.transform.position.x - hit.point.x) > controller.radius;
-            bool absZ = Mathf.Abs(player.transform.position.z - hit.point.z) > controller.radius;
+            bool absX = Mathf.Abs(player.transform.position.x - hit.point.x) > controller.radius + ModifierCollection.RadiusModifier;
+            bool absZ = Mathf.Abs(player.transform.position.z - hit.point.z) > controller.radius + ModifierCollection.RadiusModifier;
 
             // x or z ���� ���氪�� radius���� ũ�ٸ� ĳ������ ��ġ ����
             if (absX || absZ)
@@ -237,6 +237,7 @@ public class PlayerBaseState : IState
 
                 CheckSpaceAvailability(newPos + modifier, controller);
             }
+            Debug.Log(hit.point);
         }
     }
 
