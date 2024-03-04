@@ -135,6 +135,8 @@ public class InventoryUI : MonoBehaviour
             else
                 itemSlots.transform.GetChild(i).GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/" + inventory._items[i].itemId.ToString());
         }
+
+        StartCoroutine(PuzzleClearCheck());
     }
 
     private IEnumerator PuzzleClearCheck()

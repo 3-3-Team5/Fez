@@ -51,6 +51,8 @@ public class ItemBox : MonoBehaviour
 
         go.transform.position = startPosition;
 
+        go.GetComponent<ItemObject>().canGet = true;
+
         gameObject.SetActive(false);
     }
 }

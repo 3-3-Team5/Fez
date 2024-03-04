@@ -84,9 +84,30 @@ public class Player : MonoBehaviour
 
                 if (hit.collider.TryGetComponent<ItemObject>(out ItemObject itemObject))
                 {
+                    if (!itemObject.canGet) return;
+
                     inventory.AddItem(itemObject.itemData);
 
                     itemObject.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                if (Physics.Raycast(center, center - transform.position, out hit, RayCastData.RayFromCameraDistance))
+                {
+                    if (hit.collider.TryGetComponent<ItemBox>(out ItemBox itemBox))
+                    {
+                        itemBox.OpenBox();
+                    }
+
+                    if (hit.collider.TryGetComponent<ItemObject>(out ItemObject itemObject))
+                    {
+                        if (!itemObject.canGet) return;
+
+                        inventory.AddItem(itemObject.itemData);
+
+                        itemObject.gameObject.SetActive(false);
+                    }
                 }
             }
         }
