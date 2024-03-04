@@ -31,7 +31,7 @@ public class PlayerWarpState : PlayerGroundState
         {
             if (warp)
             {
-                player.gameObject.transform.position = player.warpPos.position;
+                player.gameObject.transform.position = player.warpPos;
                 warp = false;
                 StopAnimation(player.AnimationData.DoorEnterParameterHash);
                 StartAnimation(player.AnimationData.DoorExitParameterHash);

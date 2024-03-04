@@ -335,10 +335,14 @@ public class setTile : MonoBehaviour
                     for (int z = StartZ; z < MaxZ; z++)
                         for (int y = StartY; y < MaxY; y++)
                         {
-                            Instantiate(obj[blockNum], new Vector3(x, y, z - 0.5f), Quaternion.identity, transform);
+                            var objdoor = Instantiate(obj[blockNum], new Vector3(x, y, z - 0.5f), Quaternion.identity, transform);
                             if (index == 0)
                             {
-
+                                objdoor.AddComponent<PortalBlock>();
+                                objdoor.GetComponent<PortalBlock>().warpPos = new Vector3(12, 16.6f, 3f);
+                                objdoor.GetComponent<BoxCollider>().isTrigger = true;
+                                objdoor.GetComponent<BoxCollider>().size = new Vector3(1,1,30);
+                                
                             }
                             
                         }

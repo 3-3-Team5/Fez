@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class PortalBlock : MonoBehaviour
 {
-    [SerializeField] private Transform warpPos;
+    [HideInInspector] public Vector3 warpPos;
 
     private void OnTriggerEnter(Collider other)
     {
