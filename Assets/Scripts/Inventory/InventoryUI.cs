@@ -163,5 +163,9 @@ public class InventoryUI : MonoBehaviour
         }
 
         gridLayoutGroup.spacing = puzzleClearSpacing;
+
+        Instantiate(Resources.Load<GameObject>("Prefabs/Fade"));
+
+        gameObject.SetActive(false);
     }
 }

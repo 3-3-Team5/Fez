@@ -17,6 +17,7 @@ public class UVCube : MonoBehaviour
 
     public void ApplyTexture()
     {
+        /*
         mf = gameObject.GetComponent<MeshFilter>();
         if (mf)
         {
@@ -66,7 +67,7 @@ public class UVCube : MonoBehaviour
                 uvs[15] = new Vector2(tileSize * 5.001f, 1f);
                 uvs[13] = new Vector2(tileSize * 6.001f, 1f);
                 */
-
+        /*
                 // Front
                 uvs[0] = new Vector2(0f, 0f); //Bottom Left
                 uvs[1] = new Vector2(30f / 192f, 0f); //Bottom Right
@@ -111,6 +112,7 @@ public class UVCube : MonoBehaviour
         }
         else
             Debug.Log("No mesh filter attached");
+        */
 
     }
 }

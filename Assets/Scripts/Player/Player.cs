@@ -60,6 +60,7 @@ public class Player : MonoBehaviour
     public bool isVisible;
 
     public Inventory inventory = new Inventory(4);
+    private GameObject inventoryUI;
 
     public bool isDeath;
     public Action OnDeath;
@@ -199,18 +200,18 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Puzzle"))
-        {
-            inventory.AddItem(other.GetComponent<ItemObject>().itemData);
-
-            other.gameObject.SetActive(false);
-        }
-
         if (other.CompareTag("Goal"))
         {
             GameObject go = Resources.Load<GameObject>("Prefabs/Inventory");
             go.GetComponent<InventoryUI>().player = this;
-            Instantiate(go);
+            inventoryUI = Instantiate(go);
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Goal"))
+        {
+            Destroy(inventoryUI);
         }
     }
 
