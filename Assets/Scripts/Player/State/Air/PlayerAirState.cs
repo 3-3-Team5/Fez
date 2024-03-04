@@ -22,6 +22,13 @@ public class PlayerAirState : PlayerBaseState
     {
         base.Update();
 
+
+    }
+
+    public override void PhysicsUpdate()
+    {
+        base.PhysicsUpdate();
+
         if (player.isVisible) // Player가 처음부터 가려져 있는 상태라면 앞으로 땡겨오지 않아야함.
         {
             if (frontCheck)
@@ -29,13 +36,6 @@ public class PlayerAirState : PlayerBaseState
                 CheckFront();
             }
         }
-    }
-
-    public override void PhysicsUpdate()
-    {
-        base.PhysicsUpdate();
-
-
     }
 
     public override void Exit()

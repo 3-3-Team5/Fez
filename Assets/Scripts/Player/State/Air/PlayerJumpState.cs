@@ -47,7 +47,7 @@ public class PlayerJumpState : PlayerAirState
 
     void CheckOverHead()
     {
-        if (delay > 0.1f)
+        if (delay > 0.05f)
             return;
 
         // 카메라에서 캐릭터의 상단 지점으로 레이캐스트를 해야함
