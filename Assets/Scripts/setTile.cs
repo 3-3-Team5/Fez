@@ -180,7 +180,7 @@ public class setTile : MonoBehaviour
         go = Instantiate(obj[16], new Vector3(13f, 2.4f, 8f), Quaternion.Euler(new Vector3(0f, 90f, 0f)), transform);
         go.GetComponent<ItemBox>().dropItem = Resources.Load<GameObject>("Prefabs/Puzzle3");
 
-        go = Instantiate(obj[16], new Vector3(22f, 10.4f, -7f), Quaternion.Euler(new Vector3(0f, 180f, 0f)), transform);
+        go = Instantiate(obj[16], new Vector3(22f, 10.4f, -7.5f), Quaternion.Euler(new Vector3(0f, 180f, 0f)), transform);
         go.GetComponent<ItemBox>().dropItem = Resources.Load<GameObject>("Prefabs/Puzzle0");
 
         go = Instantiate(obj[16], new Vector3(5f, 16.4f, 5f), Quaternion.Euler(new Vector3(0f, -90f, 0f)), transform);
