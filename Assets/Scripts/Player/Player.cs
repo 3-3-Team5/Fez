@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
     public float knockbackPower;
 
     [HideInInspector] public bool isWarp = false;
-    [HideInInspector] public Transform warpPos;
+    [HideInInspector] public Vector3 warpPos;
 
     [HideInInspector] public Camera mainCamera;
 
@@ -195,7 +195,7 @@ public class Player : MonoBehaviour
 
     #region 워프관련
 
-    public void WarpIn(Transform warpTransform)
+    public void WarpIn(Vector3 warpTransform)
     {
         warpPos = warpTransform;
         Input.PlayerActions.Interactionportal.started += OnWarpStart;
@@ -204,7 +204,7 @@ public class Player : MonoBehaviour
 
     public void WarpOut()
     {
-        warpPos = null;
+        warpPos = Vector3.zero;
         Input.PlayerActions.Interactionportal.started -= OnWarpStart;
         Debug.Log("WarpOut");
     }

@@ -169,8 +169,8 @@ public class setTile : MonoBehaviour
 
 
         //파이널 발판
-        MakeBlock(2, 4, 1, 3, 24, 25, 15);
-        MakeBlock(15, 17, -3, -1, 26, 27, 15);
+        MakeBlock(2, 3, 1, 2, 24, 25, 15);
+        MakeBlock(15, 16, -3, -2, 26, 27, 15);
     }
 
     void MakeBlock(int StartX, int MaxX, int StartZ, int MaxZ, int StartY, int MaxY, int blockNum)
@@ -335,10 +335,14 @@ public class setTile : MonoBehaviour
                     for (int z = StartZ; z < MaxZ; z++)
                         for (int y = StartY; y < MaxY; y++)
                         {
-                            Instantiate(obj[blockNum], new Vector3(x, y, z - 0.5f), Quaternion.identity, transform);
+                            var objdoor = Instantiate(obj[blockNum], new Vector3(x, y, z - 0.5f), Quaternion.identity, transform);
                             if (index == 0)
                             {
-
+                                objdoor.AddComponent<PortalBlock>();
+                                objdoor.GetComponent<PortalBlock>().warpPos = new Vector3(12, 16.6f, 3f);
+                                objdoor.GetComponent<BoxCollider>().isTrigger = true;
+                                objdoor.GetComponent<BoxCollider>().size = new Vector3(1,1,30);
+                                
                             }
                             
                         }
