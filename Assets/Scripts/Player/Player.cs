@@ -288,6 +288,7 @@ public class Player : MonoBehaviour
         if (context.phase == InputActionPhase.Started)
         {
             isWarp = true;
+            ForceReceiver.isStop = true;
         }
     }
 

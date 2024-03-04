@@ -23,6 +23,7 @@ public class PlayerWarpState : PlayerGroundState
         base.Exit();
         StopAnimation(player.AnimationData.DoorExitParameterHash);
         player.isWarp = false;
+        forceReceiver.isStop = false;
     }
 
     public override void Update()
@@ -42,7 +43,11 @@ public class PlayerWarpState : PlayerGroundState
         {
             stateMachine.ChangeState(stateMachine.IdleState);
         }
-            
+    }
+
+    public override void PhysicsUpdate()
+    {
+        
     }
 }
 
