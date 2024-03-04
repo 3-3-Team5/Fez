@@ -1,9 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEditor.PackageManager;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
 using UnityEngine.TextCore.Text;
+using Unity.VisualScripting;
+using Cinemachine.Utility;
+using UnityEngine.InputSystem;
+
 
 public class Player : MonoBehaviour
 {
@@ -21,6 +27,18 @@ public class Player : MonoBehaviour
     public ForceReceiver ForceReceiver { get; private set; }
     [field: SerializeField] public PlayerAnimationData AnimationData { get; private set; }
 
+    [HideInInspector] public bool isslipped = false;
+    [HideInInspector] public Vector3 slideDir = Vector3.zero;
+
+    [HideInInspector] public Vector3 knockbackDir = Vector3.zero;
+    [HideInInspector] public bool isKnockback = false;
+    public float knockbackPower;
+
+    [HideInInspector] public bool isWarp = false;
+    [HideInInspector] public Transform warpPos;
+
+    [HideInInspector] public Camera mainCamera;
+
     PlayerStateMachine stateMachine;
     public bool isVisible;
 
@@ -32,7 +50,6 @@ public class Player : MonoBehaviour
         Input = GetComponent<PlayerInput>();
         Controller = GetComponent<CharacterController>();
         ForceReceiver = GetComponent<ForceReceiver>();
-
         stateMachine = new(this);
 
         //UnderFootPivot = 3.0f + 0.7f;
@@ -41,6 +58,7 @@ public class Player : MonoBehaviour
     void Start()
     {
         stateMachine.ChangeState(stateMachine.IdleState);
+        mainCamera = Camera.main;
     }
 
     void Update()
@@ -93,4 +111,78 @@ public class Player : MonoBehaviour
 
         //Gizmos.DrawRay(transform.forward, transform.forward * 10f);
     }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit) //ÎØ∏ÎÅÑ?ü¨Ïß? Íµ¨ÌòÑ?óê ?ïÑ?öî?ïú Î©îÏÑú?ìú
+    {
+        #region ÎØ∏ÎÅÑ?ü¨Ïß?
+
+        if (1 << hit.gameObject.layer == 1 << LayerMask.NameToLayer("Water"))
+        {
+            isslipped = true;
+        }
+        else isslipped = false;
+
+        #endregion
+
+        #region ?Ç¨?ùºÏß??äî Î∞úÌåê
+
+        if (hit.gameObject.TryGetComponent<DisappearBlock>(out DisappearBlock disappearBlock))
+        {
+            if (Mathf.Approximately(hit.point.y, hit.gameObject.GetComponent<Collider>().bounds.max.y))
+                disappearBlock.StartAnim();
+        }
+
+        #endregion
+
+        #region ?ÑâÎ∞?
+
+        //?ëêÍ∞? Í≤πÏπò?äî Í≤ΩÏö∞ ?ÉúÍ∑∏Ï? ?†à?ù¥?ñ¥Î°? Í¥?Î¶¨Ìï¥Î≥¥Ïûê. 
+        if (1 << hit.gameObject.layer == 1 << LayerMask.NameToLayer("Trap"))
+        {
+            if (!isKnockback)
+            {
+                Vector3 cameraRightabs = mainCamera.transform.right.Abs(); //Camera.main Ï∫êÏã±?ï¥?Ñú ?Ç¨?ö© Abs
+                isKnockback = true;
+                Vector3 knockback = (hit.point - hit.collider.bounds.center).normalized;
+                //Ïπ¥Î©î?ùº?óê Í∑??Üç?êò?äîÍ≤? ?ïÑ?ãà?ùº Ï∂©Îèå?óê Í∑??Üç?êòÍ≤? ÏΩîÎìúÎ•? ?ûë?Ñ±?ï¥?ïº?ïú?ã§.
+                //4Î∞©Ìñ•?ùÑ Ï≤¥ÌÅ¨?ï¥?Ñú ?ä§?úÑÏπòÎ?? ?èåÎ¶¨Ïàò?èÑ ?ûàÍ≥?, Ïπ¥Î©î?ùºÍ∞? ?ñ¥?ñ§ Ïπ¥Î©î?ùº?ù∏Ïß? ?ïåÍ≥? ?ï¥?ïº?ï®.
+                if (cameraRightabs.x > cameraRightabs.z)
+                {
+                    knockbackDir = ((knockback.x * cameraRightabs) + knockback.y * Vector3.up) * knockbackPower;
+                }
+                else
+                {
+                    knockbackDir = ((knockback.z * cameraRightabs) + knockback.y * Vector3.up) * knockbackPower;
+                }
+            }
+        }
+
+        #endregion
+    }
+
+    #region ?è¨?Éà ?ù¥?èô Í¥??†®
+
+    public void WarpIn(Transform warpTransform)
+    {
+        warpPos = warpTransform;
+        Input.PlayerActions.Interactionportal.started += OnWarpStart;
+        Debug.Log("WarpIn");
+    }
+
+    public void WarpOut()
+    {
+        warpPos = null;
+        Input.PlayerActions.Interactionportal.started -= OnWarpStart;
+        Debug.Log("WarpOut");
+    }
+
+    public void OnWarpStart(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started)
+        {
+            isWarp = true;
+        }
+    }
+
+    #endregion
 }

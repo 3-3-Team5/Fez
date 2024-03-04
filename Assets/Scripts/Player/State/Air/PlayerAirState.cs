@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEditor.PackageManager;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.HID;
@@ -17,13 +19,7 @@ public class PlayerAirState : PlayerBaseState
         StartAnimation(animData.AirParameterHash);
         frontCheck = true;
     }
-
-    public override void Update()
-    {
-        base.Update();
-
-
-    }
+    
 
     public override void PhysicsUpdate()
     {
@@ -35,6 +31,15 @@ public class PlayerAirState : PlayerBaseState
             {
                 CheckFront();
             }
+        }
+    }
+
+    public override void Update()
+    {
+        base.Update();
+        if (player.isKnockback)
+        {
+            stateMachine.ChangeState(stateMachine.HitState);
         }
     }
 

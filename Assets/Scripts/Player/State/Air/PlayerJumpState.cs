@@ -44,7 +44,6 @@ public class PlayerJumpState : PlayerAirState
 
         StopAnimation(animData.JumpParameterHash);
     }
-
     void CheckOverHead()
     {
         if (delay > 0.05f)
@@ -83,4 +82,5 @@ public class PlayerJumpState : PlayerAirState
         else
             frontCheck = true;
     }
+
 }
