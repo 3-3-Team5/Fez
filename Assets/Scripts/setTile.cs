@@ -169,8 +169,8 @@ public class setTile : MonoBehaviour
 
 
         //파이널 발판
-        MakeBlock(2, 4, 1, 3, 24, 25, 1);
-        MakeBlock(15, 17, -3, -1, 26, 27, 1);
+        MakeBlock(2, 4, 1, 3, 24, 25, 15);
+        MakeBlock(15, 17, -3, -1, 26, 27, 15);
     }
 
     void MakeBlock(int StartX, int MaxX, int StartZ, int MaxZ, int StartY, int MaxY, int blockNum)
@@ -229,6 +229,15 @@ public class setTile : MonoBehaviour
                             Instantiate(obj[blockNum], new Vector3(x, y , z - 0.5f), Quaternion.identity, transform);
                         }
                 break;
+            case 11:
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            if(y == MaxY - 1) Instantiate(obj[14], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
+                            else Instantiate(obj[blockNum], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
+                        }
+                break;
             case 12:
                 for (int x = StartX; x < MaxX; x++)
                     for (int z = StartZ; z < MaxZ; z++)
@@ -246,6 +255,19 @@ public class setTile : MonoBehaviour
                             var jump = Instantiate(obj[blockNum], new Vector3(x, y - 0.5f, z - 0.5f), Quaternion.identity, transform);
                             if(z ==6 ) jump.transform.rotation = Quaternion.AngleAxis(180f, Vector3.up);
                         }
+                break;
+            case 15:
+                for (int x = StartX; x < MaxX; x++)
+                for (int z = StartZ; z < MaxZ; z++)
+                for (int y = StartY; y < MaxY; y++)
+                {
+                    if (y == MaxY -1)
+                    {
+                        var front = Instantiate(obj[15], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
+                        if (z == 3 || z ==2 || z==5 || z ==7 || z == -7 || z == 4 || z == 1 || z == -3) front.transform.rotation = Quaternion.AngleAxis(180f, Vector3.up);
+                    }
+                    else Instantiate(obj[9], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
+                }
                 break;
             default:
                 for (int x = StartX; x < MaxX; x++)

@@ -13,6 +13,9 @@ public class PlayerStateMachine : StateMachine
 
     public PlayerJumpState JumpState { get; private set; }
     public PlayerFallState FallState { get; private set; }
+    public PlayerHitState HitState { get; private set; }
+    
+    public PlayerWarpState WarpState { get; private set; }
 
     public Vector2 MovementInput { get; set; }
     public float MovementSpeed { get; private set; }
@@ -28,5 +31,7 @@ public class PlayerStateMachine : StateMachine
         ClimbState = new(this);
         JumpState = new(this);
         FallState = new(this);
+        HitState = new(this);
+        WarpState = new(this);
     }
 }

@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEditor.PackageManager;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.HID;
 
 public class PlayerAirState : PlayerBaseState
 {
+    protected bool frontCheck = true;
     public PlayerAirState(PlayerStateMachine playerStateMachine) : base(playerStateMachine) { }
 
     public override void Enter()
@@ -14,6 +17,30 @@ public class PlayerAirState : PlayerBaseState
         base.Enter();
 
         StartAnimation(animData.AirParameterHash);
+        frontCheck = true;
+    }
+    
+
+    public override void PhysicsUpdate()
+    {
+        base.PhysicsUpdate();
+
+        if (player.isVisible) // Player가 처음부터 가려져 있는 상태라면 앞으로 땡겨오지 않아야함.
+        {
+            if (frontCheck)
+            {
+                CheckFront();
+            }
+        }
+    }
+
+    public override void Update()
+    {
+        base.Update();
+        if (player.isKnockback)
+        {
+            stateMachine.ChangeState(stateMachine.HitState);
+        }
     }
 
     public override void Exit()
@@ -36,25 +63,29 @@ public class PlayerAirState : PlayerBaseState
         }
     }
 
-    Vector3 ClimbableCheck()    // 여기서 추가해야 할점은 Ray 검사시 Layer 검사로 Climbable을 걸러내는 것을 추가 해줘야 함
+    Vector3 ClimbableCheck()
     {
         RaycastHit hit;
         bool isHit = false;
-        Vector3 rayStartPos = player.transform.position; // 플레이어 중앙
-        Vector3 rayDirection = Camera.main.transform.right * player.transform.localScale.x; // 캐릭터가 보고있는 방향으로
+        Vector3 rayStartPos = Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY); // 중심점
+        Vector3 PlayerFornt = (Camera.main.transform.right * player.transform.localScale.x) * RayCastData.PlayerFrontPivot;
+        rayStartPos += PlayerFornt; // Player의 정면으로 방향 조절
+        Ray ray = new Ray(rayStartPos, Camera.main.transform.forward);
 
         for (int i = 0; i < 3; ++i)
         {
             Vector3 modifier = Vector3.zero;
             modifier.y += i * 0.2f;
 
-            isHit = Physics.Raycast(rayStartPos - modifier, rayDirection, out hit, player.layDistance); // 레이어 검사 추가 예정
+            LayerMask targetLayer = LayerData.Ground;
+            isHit = Physics.Raycast(ray, out hit, RayCastData.RayFromCameraDistance, targetLayer);
             if (isHit)
             {
+                // Tag비교 추가?
                 Vector3 topPosition = hit.collider.bounds.max;
                 float distanceToTop = topPosition.y - hit.point.y;
 
-                if (distanceToTop < player.climbableDistance + modifier.y)
+                if (distanceToTop < RayCastData.ClimbableDistance + modifier.y)
                 {
                     //Debug.Log($"오브젝트 상단까지의 거리 : {distanceToTop}, " +
                     //    $"start.y : {rayStartPos.y - modifier.y}, " +

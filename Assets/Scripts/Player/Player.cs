@@ -1,14 +1,22 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEditor.PackageManager;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
+using UnityEngine.TextCore.Text;
+using Unity.VisualScripting;
+using Cinemachine.Utility;
+using UnityEngine.InputSystem;
+
 
 public class Player : MonoBehaviour
 {
     [SerializeField] public CharacterSO stats; // baseStat
 
     [Header("Modifier")]
-    public float moveSpeedModifier = 1f; // ½ºÅÈ¿¡ °¡ÁßÄ¡¸¦ ´õÇÏ´Â ½ºÅÈµéÀº ¸¹¾ÆÁö°Ô µÇ¸é µû·Î Å¬·¡½º·Î °ü¸®ÇÏ´Â°Ô ÁÁÀ»µí
+    public float moveSpeedModifier = 1f; // ï¿½ï¿½ï¿½È¿ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Èµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public float jumpForceModifier = 1f;
     public float GetMoveSpeed => stats.baseStats.MovementSpeed * moveSpeedModifier;
     public float GetJumpForce => stats.baseStats.jumpForce * jumpForceModifier;
@@ -19,10 +27,20 @@ public class Player : MonoBehaviour
     public ForceReceiver ForceReceiver { get; private set; }
     [field: SerializeField] public PlayerAnimationData AnimationData { get; private set; }
 
-    PlayerStateMachine stateMachine;
+    [HideInInspector] public bool isslipped = false;
+    [HideInInspector] public Vector3 slideDir = Vector3.zero;
 
-    public float layDistance = .7f; // Climb½Ã Àü¹æÀ¸·Î ½ò LayÀÇ °Å¸®
-    public float climbableDistance = .6f; // LayÃæµ¹ ÁöÁ¡°ú ÃÖ»ó´ÜÀÇ °Å¸®·Î ClimbableÀ» ÆÇ´Ü ÇÒ¶§ »ç¿ëÇÏ´Â ±âÁØ°ª
+    [HideInInspector] public Vector3 knockbackDir = Vector3.zero;
+    [HideInInspector] public bool isKnockback = false;
+    public float knockbackPower;
+
+    [HideInInspector] public bool isWarp = false;
+    [HideInInspector] public Transform warpPos;
+
+    [HideInInspector] public Camera mainCamera;
+
+    PlayerStateMachine stateMachine;
+    public bool isVisible;
 
     private void Awake()
     {
@@ -32,13 +50,15 @@ public class Player : MonoBehaviour
         Input = GetComponent<PlayerInput>();
         Controller = GetComponent<CharacterController>();
         ForceReceiver = GetComponent<ForceReceiver>();
-
         stateMachine = new(this);
+
+        //UnderFootPivot = 3.0f + 0.7f;
     }
 
     void Start()
     {
         stateMachine.ChangeState(stateMachine.IdleState);
+        mainCamera = Camera.main;
     }
 
     void Update()
@@ -54,19 +74,112 @@ public class Player : MonoBehaviour
         //Debug.Log($"Current State : {stateMachine.GetCurState()}");
     }
 
+    public void SetPlayerControlEnabled(bool active)
+    {
+        Controller.enabled = active;
+        Input.enabled = active;
+    }
+
     private void OnDrawGizmos()
     {
-        Vector3 direction = Camera.main.transform.right * transform.localScale.x;
+        Gizmos.color = Color.green;
 
-        Gizmos.color = Color.red;
-
-        // ·¹ÀÌ ±×¸®±â
+        Vector3 front = Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY);
+        front += (Camera.main.transform.right * transform.localScale.x) * RayCastData.PlayerFrontPivot;
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½
         for (int i = 0; i < 3; ++i)
         {
             Vector3 modifier = Vector3.zero;
             modifier.y += i * 0.2f;
 
-            Gizmos.DrawRay(transform.position - modifier, direction * layDistance);
+            Gizmos.DrawRay(front - modifier, Camera.main.transform.forward * RayCastData.RayFromCameraDistance);
+        }
+
+        Gizmos.color = Color.red;
+
+        Vector3 down = Camera.main.transform.position + (Vector3.down * RayCastData.DownPivot);
+        Gizmos.DrawRay(down, Camera.main.transform.forward * RayCastData.RayFromCameraDistance);
+
+        Vector3 up = Camera.main.transform.position + (Vector3.up * RayCastData.UpPivot);
+        Gizmos.DrawRay(up, Camera.main.transform.forward * RayCastData.RayFromCameraDistance);
+
+        Vector3 center = Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY);
+        Gizmos.DrawRay(center, transform.position - center);
+
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´ï¿½ ï¿½ï¿½ ï¿½ï¿½Ç²ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½×·ï¿½
+        //Gizmos.DrawRay(front, Camera.main.transform.forward * RayCastData.RayFromCameraDistance);
+
+        //Gizmos.DrawRay(transform.forward, transform.forward * 10f);
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit) //ë¯¸ë„?ï¿½ï¿½ï¿½? êµ¬í˜„?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ë©”ì„œ?ï¿½ï¿½
+    {
+        #region ë¯¸ë„ëŸ¬ì›€
+
+        if (1 << hit.gameObject.layer == 1 << LayerMask.NameToLayer("Water"))
+        {
+            isslipped = true;
+        }
+        else isslipped = false;
+
+        #endregion
+
+        #region ì‚¬ë¼ì§€ëŠ” ë°œíŒ
+
+        if (hit.gameObject.TryGetComponent<DisappearBlock>(out DisappearBlock disappearBlock))
+        {
+            if (Mathf.Approximately(hit.point.y, hit.gameObject.GetComponent<Collider>().bounds.max.y))
+                disappearBlock.StartAnim();
+        }
+
+        #endregion
+
+        #region ë„‰ë°±
+         
+        if (1 << hit.gameObject.layer == 1 << LayerMask.NameToLayer("Trap"))
+        {
+            if (!isKnockback)
+            {
+                Vector3 cameraRightabs = mainCamera.transform.right.Abs(); 
+                isKnockback = true;
+                Vector3 knockback = (hit.point - hit.collider.bounds.center).normalized;
+                if (cameraRightabs.x > cameraRightabs.z)
+                {
+                    knockbackDir = ((knockback.x * cameraRightabs) + knockback.y * Vector3.up) * knockbackPower;
+                }
+                else
+                {
+                    knockbackDir = ((knockback.z * cameraRightabs) + knockback.y * Vector3.up) * knockbackPower;
+                }
+            }
+        }
+
+        #endregion
+    }
+
+    #region ì›Œí”„ê´€ë ¨
+
+    public void WarpIn(Transform warpTransform)
+    {
+        warpPos = warpTransform;
+        Input.PlayerActions.Interactionportal.started += OnWarpStart;
+        Debug.Log("WarpIn");
+    }
+
+    public void WarpOut()
+    {
+        warpPos = null;
+        Input.PlayerActions.Interactionportal.started -= OnWarpStart;
+        Debug.Log("WarpOut");
+    }
+
+    public void OnWarpStart(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started)
+        {
+            isWarp = true;
         }
     }
+
+    #endregion
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,6 +15,12 @@ public class PlayerBaseState : IState
     protected CharacterController controller;
     protected ForceReceiver forceReceiver;
 
+    private bool isSliding = false;
+    private float slideTime = 2f; // ë¯¸ë„ëŸ¬ì§€ëŠ” ë™ì‘ ì§€ì† ì‹œê°„
+    private float slideTimer = 0f;
+    protected float slidingSpeed = 2f;
+
+
     public PlayerBaseState(PlayerStateMachine playerStateMachine)
     {
         stateMachine = playerStateMachine;
@@ -22,16 +29,16 @@ public class PlayerBaseState : IState
         animData = stateMachine.Player.AnimationData;
         controller = stateMachine.Player.Controller;
         forceReceiver = stateMachine.Player.ForceReceiver;
-
     }
+
     public virtual void Enter()
     {
-        AddInputActionsCallbacks(); // ÀÎÇ² Ã³¸®¸¦ À§ÇÑ ÀÌº¥Æ® Ãß°¡
+        AddInputActionsCallbacks(); // ï¿½ï¿½Ç² Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½ß°ï¿½
     }
 
     public virtual void Exit()
     {
-        RemoveInputActionsCallbacks(); // »óÅÂ°¡ º¯°æµÇ´Ï ÇöÀç µî·ÏµÇ¾î ÀÖ´Â »óÅÂÀÇ ÀÌº¥Æ® Á¦°Å
+        RemoveInputActionsCallbacks(); // ï¿½ï¿½ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ÏµÇ¾ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½
     }
 
     public virtual void HandleInput()
@@ -41,18 +48,21 @@ public class PlayerBaseState : IState
 
     public virtual void PhysicsUpdate()
     {
-
     }
 
     public virtual void Update()
     {
         Move();
+
+        //if (stateMachine.GetCurState() != stateMachine.IdleState)
+        CheckVisible();
     }
 
     protected virtual void AddInputActionsCallbacks()
     {
         input.PlayerActions.Jump.started += OnJumpStarted;
     }
+
     protected virtual void RemoveInputActionsCallbacks()
     {
         input.PlayerActions.Jump.started -= OnJumpStarted;
@@ -62,6 +72,11 @@ public class PlayerBaseState : IState
     {
         Vector3 movementDirection = GetMovementDirection();
 
+        if (movementDirection != Vector3.zero)
+        {
+            player.slideDir = movementDirection.x * player.mainCamera.transform.right;
+        }
+
         Move(movementDirection);
         LookRotation(movementDirection);
     }
@@ -70,50 +85,77 @@ public class PlayerBaseState : IState
     {
         float movementSpeed = player.GetMoveSpeed;
 
-        Vector3 cameraRight = Camera.main.transform.right;
-        movementDirection = cameraRight * movementDirection.x; // Ä«¸Ş¶ó ±âÁØÀ¸·Î ÀÌµ¿ ¹æÇâÀ» ¼³Á¤
+        movementDirection = player.mainCamera.transform.right * movementDirection.x; // Ä«ï¿½Ş¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-        // ÁÂ/¿ì ÀÌµ¿ - movementDirection , »ó/ÇÏ(Á¡ÇÁ, Áß·Â) - ForceReceiver.Movement
-        Vector3 finalMovement = movementDirection * movementSpeed + player.ForceReceiver.Movement;
+        // ï¿½ï¿½/ï¿½ï¿½ ï¿½Ìµï¿½ - movementDirection , ï¿½ï¿½/ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½, ï¿½ß·ï¿½) - ForceReceiver.Movement
+        Vector3 finalMovement = movementDirection * movementSpeed + player.ForceReceiver.Movement + player.knockbackDir;
+        // Z ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ 0.0000007213769 ~ -0.0000008539862 ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
+        // Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×³ï¿½ 0ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
+        if (player.slideDir != Vector3.zero && player.isslipped && Mathf.Approximately(finalMovement.magnitude, 0f) &&
+            !isSliding)
+            // ì´ë™ì´ ì¢…ë£Œë˜ê³ , ë¯¸ë„ëŸ¬ìš´ ìƒíƒœë¼ë©´
+        {
+            isSliding = true;
+            slideTimer = 0f;
+        }
 
-        // Z ÃàÀ¸·Î ÀÌµ¿ÇÒ ¶§ 0.0000007213769 ~ -0.0000008539862 ¿ÀÂ÷ ¹ß°ß
-        // Æ¯Á¤ ¼öº¸´Ù ÀÛÀ¸¸é ±×³É 0À¸·Î Ã³¸®
-        if (Mathf.Abs(finalMovement.x) < 1e-6f) // 1e-6f = 0.000001
-            finalMovement.x = 0;
+        if (isSliding)
+        {
+            slideTimer += Time.deltaTime;
+            if (slideTimer >= slideTime)
+            {
+                isSliding = false;
+                player.slideDir = Vector3.zero;
+                return;
+            }
 
-        controller.Move(finalMovement * Time.deltaTime); // ¿òÁ÷ÀÓ ÁöÁ¤
+
+            // Z ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½ 0.0000007213769 ~ -0.0000008539862 ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
+            // Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×³ï¿½ 0ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
+            if (Mathf.Abs(finalMovement.x) < 1e-6f) // 1e-6f = 0.000001
+                finalMovement.x = 0;
+            if (Mathf.Abs(finalMovement.z) < 1e-6f) // 1e-6f = 0.000001
+                finalMovement.z = 0;
+
+            if (player.isslipped) //ë¯¸ë„ëŸ¬ì§€ì§€ ì•ŠëŠ” ë¶€ë¶„ ë“¤ì–´ê°ˆ ë•Œ ë°”ë¡œ ë©ˆì¶œ ìˆ˜ ìˆë„ë¡
+                controller.SimpleMove(player.slideDir * slidingSpeed);
+            return;
+        }
+
+
+        controller.Move(finalMovement * Time.deltaTime); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
 
     private void LookRotation(Vector3 movementDirection)
     {
-        Transform cameraTransform = Camera.main.transform;
-        // Ä«¸Ş¶óÀÇ À§Ä¡¸¦ ±âÁØÀ¸·Î Ä³¸¯ÅÍ°¡ ¹Ù¶óº¼ ¹æÇâ °è»ê
+        Transform cameraTransform = player.mainCamera.transform;
+        // Ä«ï¿½Ş¶ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½Í°ï¿½ ï¿½Ù¶ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
         Vector3 direction = cameraTransform.position - player.transform.position;
-        direction.y = 0; // ¼öÆò¸¸ ¹Ù¶óº¸°Ô ÇÏ±â À§ÇØ¼­
+        direction.y = 0; // ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸°ï¿½ ï¿½Ï±ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½
 
-        // Ä³¸¯ÅÍ°¡ Ä«¸Ş¶ó ¹æÇâÀ» ¹Ù¶óº¸µµ·Ï È¸Àü
+        // Ä³ï¿½ï¿½ï¿½Í°ï¿½ Ä«ï¿½Ş¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¶óº¸µï¿½ï¿½ï¿½ È¸ï¿½ï¿½
         Quaternion lookRotation = Quaternion.LookRotation(direction);
         player.transform.rotation = lookRotation;
 
-        // Ä³¸¯ÅÍÀÇ ÁÂ/¿ì ¹Ù¶óº¸´Â ¹æÇâ ¼³Á¤
-        if (movementDirection.x < 0) // ¿òÁ÷ÀÓÀÌ ¾øÀ»‹š´Â ±×³É ³ÀµÎ±â À§ÇØ¼­ 0ÀÎ °æ¿ì´Â Ã³¸®ÇÏÁö ¾ÊÀ½.
+        // Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½/ï¿½ï¿½ ï¿½Ù¶óº¸´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        if (movementDirection.x < 0) // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×³ï¿½ ï¿½ï¿½ï¿½Î±ï¿½ ï¿½ï¿½ï¿½Ø¼ï¿½ 0ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
         {
-            // ÁÂÃøÀ¸·Î ÀÌµ¿ÇÏ°í ÀÖ´Â °æ¿ì
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ï°ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½
             player.transform.localScale = new Vector3(-1, 1, 1);
         }
         else if (movementDirection.x > 0)
         {
-            // ¿ìÃøÀ¸·Î ÀÌµ¿ÇÏ°í ÀÖ´Â °æ¿ì
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½Ï°ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½
             player.transform.localScale = new Vector3(1, 1, 1);
         }
     }
 
-    private void ReadMovementInput() // PlayerInput.Move ¿¡ ÀÖ´Â °ªÀ» ÀĞ¾î¿È
+    private void ReadMovementInput() // PlayerInput.Move ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ğ¾ï¿½ï¿½
     {
         stateMachine.MovementInput = input.PlayerActions.Move.ReadValue<Vector2>();
     }
 
-    private Vector2 GetMovementDirection()
+    protected Vector2 GetMovementDirection()
     {
         return stateMachine.MovementInput;
     }
@@ -132,4 +174,92 @@ public class PlayerBaseState : IState
     {
         stateMachine.Player.Animator.SetBool(animationHash, false);
     }
+
+
+    void CheckVisible()
+    {
+        // Ä«ï¿½Ş¶ó¿¡¼ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½Ø¾ï¿½ï¿½ï¿½ : Ä«ï¿½Ş¶ï¿½ ï¿½Ç¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ + ï¿½ï¿½ ï¿½Æ·ï¿½ = RayCastData.DownPivot
+        Vector3 cameraPos = Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY);
+        Ray ray = new Ray(cameraPos, player.transform.position - cameraPos);
+        RaycastHit hit;
+
+        // ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+        LayerMask targetLayer = LayerData.Ground | LayerData.Wall;
+        if (Physics.Raycast(ray, out hit, RayCastData.CameraToPlayerDis, targetLayer))
+        {
+            // ï¿½ï¿½ï¿½Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½ Playerï¿½ï¿½ ï¿½Õ¿ï¿½ ï¿½Ö´Ù¸ï¿½.
+            player.isVisible = false;
+        }
+        else
+            player.isVisible = true;
+    }
+
+    protected Vector3 InitPlayerPosModifier(Vector3 modifier)
+    {
+        modifier.y = 0f; //yï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
+        modifier.Normalize();
+        modifier = modifier * (controller.radius + 0.3f); // ï¿½ï¿½ï¿½ï¿½ * ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½İ¶ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ü¿ï¿½
+
+        return modifier;
+    }
+
+    protected void CheckFront()
+    {
+        // Ä«ï¿½Ş¶ó¿¡¼ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ®
+        Vector3 rayStartPos =
+            Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY); // ï¿½ß½ï¿½ï¿½ï¿½
+        // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½Å­ï¿½ï¿½ ï¿½Õ¿ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½
+        Vector3 PlayerFornt = (Camera.main.transform.right * player.transform.localScale.x) *
+                              RayCastData.PlayerFrontPivot;
+        rayStartPos += PlayerFornt; // Playerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+
+        Ray ray = new Ray(rayStartPos, Camera.main.transform.forward);
+        RaycastHit hit;
+
+        // ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+        LayerMask targetLayer = LayerData.Ground | LayerData.Wall;
+        if (Physics.Raycast(ray, out hit, RayCastData.RayFromCameraDistance, targetLayer))
+        {
+            hit.point -= PlayerFornt; // ï¿½ï¿½ï¿½ï¿½ ï¿½æµ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Â¦ ï¿½ï¿½ï¿½ï¿½ï¿½Ì´Ï±ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½Å­ ï¿½Ù½ï¿½ ï¿½M
+            Vector3 modifier = Camera.main.transform.position - player.transform.position; // Ä«ï¿½Ş¶ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            modifier = InitPlayerPosModifier(modifier); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­
+
+            // x,z ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½Ì»ï¿½ ï¿½ï¿½ï¿½Ì³ï¿½ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½
+            Vector3 newPos = player.transform.position;
+            bool absX = Mathf.Abs(player.transform.position.x - hit.point.x) > controller.radius;
+            bool absZ = Mathf.Abs(player.transform.position.z - hit.point.z) > controller.radius;
+
+            // x or z ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½æ°ªï¿½ï¿½ radiusï¿½ï¿½ï¿½ï¿½ Å©ï¿½Ù¸ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½
+            if (absX || absZ)
+            {
+                newPos.x = absX ? hit.point.x : newPos.x;
+                newPos.z = absZ ? hit.point.z : newPos.z;
+
+                CheckSpaceAvailability(newPos + modifier, controller);
+            }
+        }
+    }
+
+    // ï¿½Ìµï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Playerï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+    public bool CheckSpaceAvailability(Vector3 targetPosition, CharacterController controller)
+    {
+        Vector3 colliderSize = new Vector3(controller.radius * 2, controller.height, controller.radius * 2);
+
+        LayerMask targetLayer = LayerData.Ground | LayerData.Wall;
+        Collider[] hitColliders = Physics.OverlapBox(targetPosition + controller.center, colliderSize / 2,
+            Quaternion.identity, targetLayer);
+        if (hitColliders.Length > 0)
+        {
+            //Debug.Log("Can't Move");
+            return false;
+        }
+        else
+        {
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            //Debug.Log("Can Move");
+            player.transform.position = targetPosition;
+            return true;
+        }
+    }
 }
+

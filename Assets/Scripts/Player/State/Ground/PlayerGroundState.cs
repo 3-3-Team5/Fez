@@ -17,6 +17,18 @@ public class PlayerGroundState : PlayerBaseState
     public override void Update()
     {
         base.Update();
+        
+        if (player.isKnockback)
+        {
+            stateMachine.ChangeState(stateMachine.HitState);
+            return;
+        }
+
+        if (player.isWarp)
+        {
+            stateMachine.ChangeState(stateMachine.WarpState);
+            return;
+        }
 
         // ClimbState가 아닐 때만 떨어지게 만들어야함 이 조건이 들어가지 않으면 ClimbState가 바로 종료됨
         // 조건문 하나에 다 넣지 않은 이유 : 불필요한 !controller.isGrounded && controller.velocity.y < -0.5f 연산을 하지 않게끔
@@ -40,4 +52,6 @@ public class PlayerGroundState : PlayerBaseState
         base.OnJumpStarted(context);
         stateMachine.ChangeState(stateMachine.JumpState);
     }
+    
+    
 }
