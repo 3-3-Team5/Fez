@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -9,7 +10,7 @@ using UnityEngine.UI;
 public class InventoryUI : MonoBehaviour
 {
     [SerializeField]
-    private Player player;
+    private Player2 player;
     private Inventory inventory;
     [SerializeField]
     private GameObject itemSlots;
@@ -133,12 +134,22 @@ public class InventoryUI : MonoBehaviour
             if (inventory._items[i] == null)
                 itemSlots.transform.GetChild(i).GetComponent<Image>().sprite = null;
             else
-                itemSlots.transform.GetChild(i).GetComponent<Image>().sprite = Resources.Load<Sprite>(inventory._items[i].itemId.ToString());
+                itemSlots.transform.GetChild(i).GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/" + inventory._items[i].itemId.ToString());
         }
     }
 
     private IEnumerator PuzzleClearCheck()
     {
+        // 퍼즐 맞췄는지 체크
+        for (int i = 0; i < inventory._items.Length; i++)
+        {
+            // 빈 자리 있으면 리턴
+            if (inventory._items[i] == null) yield break;
+            // 자기 자리 아닌 퍼즐이 있으면 리턴
+            if (inventory._items[i].itemId.ToString() != itemSlots.transform.GetChild(i).name) yield break;
+        }
+
+        // 퍼즐 클리어 애니메이션
         float time = 0f;
 
         while (time < puzzleClearDuration)

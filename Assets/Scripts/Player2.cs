@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player2 : MonoBehaviour
 {
     public Inventory inventory = new Inventory(4);
 
@@ -17,6 +17,8 @@ public class Player : MonoBehaviour
         if (other.CompareTag("Puzzle"))
         {
             inventory.AddItem(other.GetComponent<ItemObject>().itemData);
+
+            other.gameObject.SetActive(false);
         }
     }
 }
