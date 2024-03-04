@@ -9,6 +9,8 @@ using UnityEngine.TextCore.Text;
 using Unity.VisualScripting;
 using Cinemachine.Utility;
 using UnityEngine.InputSystem;
+using UnityEngine.Windows;
+using UnityEngine.UIElements;
 
 
 public class Player : MonoBehaviour
@@ -42,6 +44,8 @@ public class Player : MonoBehaviour
     PlayerStateMachine stateMachine;
     public bool isVisible;
 
+    public Inventory inventory = new Inventory(4);
+
     private void Awake()
     {
         AnimationData.Initialize();
@@ -65,6 +69,49 @@ public class Player : MonoBehaviour
     {
         stateMachine?.HandleInput();
         stateMachine.Update();
+
+        Vector3 center = Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY);
+
+        if (UnityEngine.Input.GetKeyDown(KeyCode.X))
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(center, transform.position - center, out hit, RayCastData.RayFromCameraDistance))
+            {
+                if (hit.collider.TryGetComponent<ItemBox>(out ItemBox itemBox))
+                {
+                    itemBox.OpenBox();
+                }
+
+                if (hit.collider.TryGetComponent<ItemObject>(out ItemObject itemObject))
+                {
+                    if (!itemObject.canGet) return;
+
+                    inventory.AddItem(itemObject.itemData);
+
+                    itemObject.gameObject.SetActive(false);
+                }
+            }
+            else
+            {
+                if (Physics.Raycast(center, center - transform.position, out hit, RayCastData.RayFromCameraDistance))
+                {
+                    if (hit.collider.TryGetComponent<ItemBox>(out ItemBox itemBox))
+                    {
+                        itemBox.OpenBox();
+                    }
+
+                    if (hit.collider.TryGetComponent<ItemObject>(out ItemObject itemObject))
+                    {
+                        if (!itemObject.canGet) return;
+
+                        inventory.AddItem(itemObject.itemData);
+
+                        itemObject.gameObject.SetActive(false);
+                    }
+                }
+            }
+        }
+
     }
 
     private void FixedUpdate()
@@ -110,6 +157,23 @@ public class Player : MonoBehaviour
         //Gizmos.DrawRay(front, Camera.main.transform.forward * RayCastData.RayFromCameraDistance);
 
         //Gizmos.DrawRay(transform.forward, transform.forward * 10f);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Puzzle"))
+        {
+            inventory.AddItem(other.GetComponent<ItemObject>().itemData);
+
+            other.gameObject.SetActive(false);
+        }
+
+        if (other.CompareTag("Goal"))
+        {
+            GameObject go = Resources.Load<GameObject>("Prefabs/Inventory");
+            go.GetComponent<InventoryUI>().player = this;
+            Instantiate(go);
+        }
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit) //미끄?���? 구현?�� ?��?��?�� 메서?��
