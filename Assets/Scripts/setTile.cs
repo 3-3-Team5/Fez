@@ -120,7 +120,7 @@ public class setTile : MonoBehaviour
         MakeBlock(9, 15, 3, 13, 19, 20, 6);
 
         //¹®
-        MakeBlock(6, 7, 2, 3, -3, -2, 8);
+        MakeBlock(6, 7, 2, 3, -3, -2, 8,0);
         MakeBlock(13, 14, 3, 4, 1, 2, 8);
         MakeBlock(12, 13, 5, 6, 5, 6, 8);
         MakeBlock(3, 4, 9, 10, 5, 6, 7);
@@ -280,5 +280,119 @@ public class setTile : MonoBehaviour
 
         }
        
+    }
+
+    void MakeBlock(int StartX, int MaxX, int StartZ, int MaxZ, int StartY, int MaxY, int blockNum, int index)
+    {
+        switch (blockNum)
+        {
+            case 0:
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            if (y == 1 || y == 12 || y == 16 || y == 21)
+                            {
+                                var land = Instantiate(obj[5], new Vector3(x, y - 5.5f, z), Quaternion.identity, transform);
+                                if (z == 0 || z == -9 || z == 7 || z == 5 || z == 19) land.transform.rotation = Quaternion.AngleAxis(180f, Vector3.up);
+                            }
+                            else Instantiate(obj[blockNum], new Vector3(x, y - 5.5f, z), Quaternion.identity, transform);
+                        }
+                break;
+            case 1:
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            if (y == MaxY - 1)
+                            {
+                                var front = Instantiate(obj[2], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
+                                if (z == 3 || z == 2 || z == 5 || z == 7 || z == -7 || z == 4 || z == 1 || z == -3) front.transform.rotation = Quaternion.AngleAxis(180f, Vector3.up);
+                            }
+                            else Instantiate(obj[9], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
+                        }
+                break;
+            case 6:
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            Instantiate(obj[blockNum], new Vector3(x, y - 3.05f, z), Quaternion.identity, transform);
+                        }
+                break;
+
+            case 7:
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            Instantiate(obj[blockNum], new Vector3(x - 0.5f, y, z), Quaternion.identity, transform);
+                        }
+                break;
+
+            case 8:
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            Instantiate(obj[blockNum], new Vector3(x, y, z - 0.5f), Quaternion.identity, transform);
+                            if (index == 0)
+                            {
+
+                            }
+                            
+                        }
+                break;
+            case 11:
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            if (y == MaxY - 1) Instantiate(obj[14], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
+                            else Instantiate(obj[blockNum], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
+                        }
+                break;
+            case 12:
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            Instantiate(obj[blockNum], new Vector3(x - 0.5f, y - 0.5f, z), Quaternion.identity, transform);
+                        }
+                break;
+
+            case 13:
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            var jump = Instantiate(obj[blockNum], new Vector3(x, y - 0.5f, z - 0.5f), Quaternion.identity, transform);
+                            if (z == 6) jump.transform.rotation = Quaternion.AngleAxis(180f, Vector3.up);
+                        }
+                break;
+            case 15:
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            if (y == MaxY - 1)
+                            {
+                                var front = Instantiate(obj[15], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
+                                if (z == 3 || z == 2 || z == 5 || z == 7 || z == -7 || z == 4 || z == 1 || z == -3) front.transform.rotation = Quaternion.AngleAxis(180f, Vector3.up);
+                            }
+                            else Instantiate(obj[9], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
+                        }
+                break;
+            default:
+                for (int x = StartX; x < MaxX; x++)
+                    for (int z = StartZ; z < MaxZ; z++)
+                        for (int y = StartY; y < MaxY; y++)
+                        {
+                            Instantiate(obj[blockNum], new Vector3(x, y - 3.5f, z), Quaternion.identity, transform);
+                        }
+                break;
+
+        }
+
     }
 }
