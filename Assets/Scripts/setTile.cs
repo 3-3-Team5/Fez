@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -171,6 +172,19 @@ public class setTile : MonoBehaviour
         //파이널 발판
         MakeBlock(2, 3, 1, 2, 24, 25, 15);
         MakeBlock(15, 16, -3, -2, 26, 27, 15);
+
+        // 아이템 박스
+        GameObject go = Instantiate(obj[16], new Vector3(7f, -0.6f, 2f), Quaternion.Euler(new Vector3(0f, 180f, 0f)), transform);
+        go.GetComponent<ItemBox>().dropItem = Resources.Load<GameObject>("Prefabs/Puzzle2");
+
+        go = Instantiate(obj[16], new Vector3(13f, 2.4f, 8f), Quaternion.Euler(new Vector3(0f, 90f, 0f)), transform);
+        go.GetComponent<ItemBox>().dropItem = Resources.Load<GameObject>("Prefabs/Puzzle3");
+
+        go = Instantiate(obj[16], new Vector3(22f, 10.4f, -7f), Quaternion.Euler(new Vector3(0f, 180f, 0f)), transform);
+        go.GetComponent<ItemBox>().dropItem = Resources.Load<GameObject>("Prefabs/Puzzle0");
+
+        go = Instantiate(obj[16], new Vector3(5f, 16.4f, 5f), Quaternion.Euler(new Vector3(0f, -90f, 0f)), transform);
+        go.GetComponent<ItemBox>().dropItem = Resources.Load<GameObject>("Prefabs/Puzzle1");
     }
 
     void MakeBlock(int StartX, int MaxX, int StartZ, int MaxZ, int StartY, int MaxY, int blockNum)

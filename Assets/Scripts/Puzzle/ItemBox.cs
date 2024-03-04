@@ -5,25 +5,11 @@ using static UnityEditor.Progress;
 
 public class ItemBox : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject dropItem;
+    public GameObject dropItem;
     private float rotationSpeed = 100f;
     private float dropHeight = 1f;
     private float dropDuration = 1f;
-
-    /*
-    private void OnTriggerStay(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            if (Input.GetKeyDown(KeyCode.X))
-            {
-                OpenBox();
-            }
-        }
-    }
-    */
-
+    private bool drop = false;
     public void OpenBox()
     {
         StartCoroutine(ItemDrop(dropItem));
@@ -31,6 +17,9 @@ public class ItemBox : MonoBehaviour
 
     private IEnumerator ItemDrop(GameObject dropItem)
     {
+        if (drop == true) yield break;
+
+        drop = true;
         GameObject go = Instantiate(dropItem);
         go.transform.position = transform.position;
 

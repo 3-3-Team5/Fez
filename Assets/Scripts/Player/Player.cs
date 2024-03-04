@@ -146,6 +146,13 @@ public class Player : MonoBehaviour
 
             other.gameObject.SetActive(false);
         }
+
+        if (other.CompareTag("Goal"))
+        {
+            GameObject go = Resources.Load<GameObject>("Prefabs/Inventory");
+            go.GetComponent<InventoryUI>().player = this;
+            Instantiate(go);
+        }
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit) //미끄?���? 구현?�� ?��?��?�� 메서?��

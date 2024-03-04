@@ -7,7 +7,7 @@ TagManager:
   - Climbable
   - ItemSlot
   - Puzzle
-  - ItemBox
+  - Goal
   layers:
   - Default
   - TransparentFX
