@@ -92,7 +92,7 @@ public class Player : MonoBehaviour
         for (int i = 0; i < 3; ++i)
         {
             Vector3 modifier = Vector3.zero;
-            modifier.y += i * 0.2f;
+            modifier.y += i * 0.1f;
 
             Gizmos.DrawRay(front - modifier, Camera.main.transform.forward * RayCastData.RayFromCameraDistance);
         }

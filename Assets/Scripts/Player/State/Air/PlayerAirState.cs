@@ -19,7 +19,7 @@ public class PlayerAirState : PlayerBaseState
         StartAnimation(animData.AirParameterHash);
         frontCheck = true;
     }
-    
+
 
     public override void PhysicsUpdate()
     {
@@ -75,7 +75,7 @@ public class PlayerAirState : PlayerBaseState
         for (int i = 0; i < 3; ++i)
         {
             Vector3 modifier = Vector3.zero;
-            modifier.y += i * 0.2f;
+            modifier.y += i * 0.1f;
 
             LayerMask targetLayer = LayerData.Ground;
             isHit = Physics.Raycast(ray, out hit, RayCastData.RayFromCameraDistance, targetLayer);
@@ -93,7 +93,7 @@ public class PlayerAirState : PlayerBaseState
                     //    $"able : {player.climbableDistance + modifier.y}");
 
                     // 벽을 탈 수 있으니까 벽을 타고 올라 갔을때의 플레이어 위치를 계산해서 리턴
-                    float movePosY = (distanceToTop + controller.height / 2);
+                    float movePosY = (distanceToTop + controller.height);
                     Vector3 movePosition = hit.point + (Vector3.up * movePosY);
 
                     return movePosition;
@@ -107,7 +107,7 @@ public class PlayerAirState : PlayerBaseState
     void ChangeClimbState(Vector3 movePosition)
     {
         // 부딪힌 벽의 최상단으로 이동시키고 그대로 이동시키면 땅에 박혀있으니 height/2 만큼 보정을 준다.
-        player.transform.position = movePosition; // 이것도 ClimbState.Enter() 실행 될 때 실행시키고 싶은데 그러면 추가해야할게 많아지는 것 같음
+        CheckSpaceAvailability(movePosition, controller);
         stateMachine.ChangeState(stateMachine.ClimbState);
     }
 }
