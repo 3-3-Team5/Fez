@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 343881973}
   - component: {fileID: 343881972}
   - component: {fileID: 343881971}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -441,7 +441,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1917778069}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 78ed5177e74e55c489de8d201077c3b2, type: 3}
   m_Name: 
@@ -449,6 +449,17 @@ MonoBehaviour:
   obj:
   - {fileID: 6911114726117181040, guid: 877e6f2c0a2c2444c86edde08dc4b006, type: 3}
   - {fileID: 1840036350653917284, guid: 9ad47671dfdd1b34bb2d308097af13e3, type: 3}
+  - {fileID: 406051163875895008, guid: 078d0767681567142a7d7ea1f2e8f679, type: 3}
+  - {fileID: 406051163875895008, guid: 078d0767681567142a7d7ea1f2e8f679, type: 3}
+  - {fileID: 406051163875895008, guid: 078d0767681567142a7d7ea1f2e8f679, type: 3}
+  - {fileID: 406051163875895008, guid: 078d0767681567142a7d7ea1f2e8f679, type: 3}
+  - {fileID: 406051163875895008, guid: 078d0767681567142a7d7ea1f2e8f679, type: 3}
+  - {fileID: 406051163875895008, guid: 078d0767681567142a7d7ea1f2e8f679, type: 3}
+  - {fileID: 406051163875895008, guid: 078d0767681567142a7d7ea1f2e8f679, type: 3}
+  - {fileID: 406051163875895008, guid: 078d0767681567142a7d7ea1f2e8f679, type: 3}
+  - {fileID: 406051163875895008, guid: 078d0767681567142a7d7ea1f2e8f679, type: 3}
+  - {fileID: 406051163875895008, guid: 078d0767681567142a7d7ea1f2e8f679, type: 3}
+  - {fileID: 406051163875895008, guid: 078d0767681567142a7d7ea1f2e8f679, type: 3}
   - {fileID: 406051163875895008, guid: 078d0767681567142a7d7ea1f2e8f679, type: 3}
 --- !u!1001 &3961477094344486013
 PrefabInstance:

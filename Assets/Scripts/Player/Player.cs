@@ -16,7 +16,7 @@ public class Player : MonoBehaviour
     [SerializeField] public CharacterSO stats; // baseStat
 
     [Header("Modifier")]
-    public float moveSpeedModifier = 1f; // ½ºÅÈ¿¡ °¡ÁßÄ¡¸¦ ´õÇÏ´Â ½ºÅÈµéÀº ¸¹¾ÆÁö°Ô µÇ¸é µû·Î Å¬·¡½º·Î °ü¸®ÇÏ´Â°Ô ÁÁÀ»µí
+    public float moveSpeedModifier = 1f; // ï¿½ï¿½ï¿½È¿ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Èµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¸ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public float jumpForceModifier = 1f;
     public float GetMoveSpeed => stats.baseStats.MovementSpeed * moveSpeedModifier;
     public float GetJumpForce => stats.baseStats.jumpForce * jumpForceModifier;
@@ -86,7 +86,7 @@ public class Player : MonoBehaviour
 
         Vector3 front = Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY);
         front += (Camera.main.transform.right * transform.localScale.x) * RayCastData.PlayerFrontPivot;
-        // ·¹ÀÌ ±×¸®±â
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½
         for (int i = 0; i < 3; ++i)
         {
             Vector3 modifier = Vector3.zero;
@@ -106,15 +106,15 @@ public class Player : MonoBehaviour
         Vector3 center = Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY);
         Gizmos.DrawRay(center, transform.position - center);
 
-        // ±âÁî¸ğ ¿¡·¯´Â ±×³É ½ÇÇàÁßÀÌ ¾Æ´Ò ¶§ ÀÎÇ²°ª °¡Á®¿À·ÁÇØ¼­ ±×·³
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Æ´ï¿½ ï¿½ï¿½ ï¿½ï¿½Ç²ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½×·ï¿½
         //Gizmos.DrawRay(front, Camera.main.transform.forward * RayCastData.RayFromCameraDistance);
 
         //Gizmos.DrawRay(transform.forward, transform.forward * 10f);
     }
 
-    private void OnControllerColliderHit(ControllerColliderHit hit) //ë¯¸ë„?Ÿ¬ì§? êµ¬í˜„?— ?•„?š”?•œ ë©”ì„œ?“œ
+    private void OnControllerColliderHit(ControllerColliderHit hit) //ë¯¸ë„?ï¿½ï¿½ï¿½? êµ¬í˜„?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ë©”ì„œ?ï¿½ï¿½
     {
-        #region ë¯¸ë„?Ÿ¬ì§?
+        #region ë¯¸ë„ëŸ¬ì›€
 
         if (1 << hit.gameObject.layer == 1 << LayerMask.NameToLayer("Water"))
         {
@@ -124,7 +124,7 @@ public class Player : MonoBehaviour
 
         #endregion
 
-        #region ?‚¬?¼ì§??Š” ë°œíŒ
+        #region ì‚¬ë¼ì§€ëŠ” ë°œíŒ
 
         if (hit.gameObject.TryGetComponent<DisappearBlock>(out DisappearBlock disappearBlock))
         {
@@ -134,18 +134,15 @@ public class Player : MonoBehaviour
 
         #endregion
 
-        #region ?„‰ë°?
-
-        //?‘ê°? ê²¹ì¹˜?Š” ê²½ìš° ?ƒœê·¸ì? ? ˆ?´?–´ë¡? ê´?ë¦¬í•´ë³´ì. 
+        #region ë„‰ë°±
+         
         if (1 << hit.gameObject.layer == 1 << LayerMask.NameToLayer("Trap"))
         {
             if (!isKnockback)
             {
-                Vector3 cameraRightabs = mainCamera.transform.right.Abs(); //Camera.main ìºì‹±?•´?„œ ?‚¬?š© Abs
+                Vector3 cameraRightabs = mainCamera.transform.right.Abs(); 
                 isKnockback = true;
                 Vector3 knockback = (hit.point - hit.collider.bounds.center).normalized;
-                //ì¹´ë©”?¼?— ê·??†?˜?Š”ê²? ?•„?‹ˆ?¼ ì¶©ëŒ?— ê·??†?˜ê²? ì½”ë“œë¥? ?‘?„±?•´?•¼?•œ?‹¤.
-                //4ë°©í–¥?„ ì²´í¬?•´?„œ ?Š¤?œ„ì¹˜ë?? ?Œë¦¬ìˆ˜?„ ?ˆê³?, ì¹´ë©”?¼ê°? ?–´?–¤ ì¹´ë©”?¼?¸ì§? ?•Œê³? ?•´?•¼?•¨.
                 if (cameraRightabs.x > cameraRightabs.z)
                 {
                     knockbackDir = ((knockback.x * cameraRightabs) + knockback.y * Vector3.up) * knockbackPower;
@@ -160,7 +157,7 @@ public class Player : MonoBehaviour
         #endregion
     }
 
-    #region ?¬?ƒˆ ?´?™ ê´?? ¨
+    #region ì›Œí”„ê´€ë ¨
 
     public void WarpIn(Transform warpTransform)
     {

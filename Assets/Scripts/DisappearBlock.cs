@@ -13,6 +13,9 @@ public class DisappearBlock : MonoBehaviour
     private Color originColor;
     private Color endColor;
     [HideInInspector]public bool isTouch = false;
+
+    private Ray[] rays;
+    
     
     void Start()
     {
@@ -26,7 +29,7 @@ public class DisappearBlock : MonoBehaviour
     public void StartAnim()
     {
         _animator.SetBool("IsTouch",true);
-    }
+    }   
 
     public void InvokeReset()
     {
