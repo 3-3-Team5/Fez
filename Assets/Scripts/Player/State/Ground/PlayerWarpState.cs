@@ -5,8 +5,7 @@ using UnityEngine;
 
 public class PlayerWarpState : PlayerGroundState
 {
-
-    private float time;
+   
     private bool warp;
     public PlayerWarpState(PlayerStateMachine playerStateMachine) : base(playerStateMachine)
     {
@@ -17,7 +16,6 @@ public class PlayerWarpState : PlayerGroundState
         base.Enter();
         StartAnimation(player.AnimationData.DoorEnterParameterHash);
         warp = true;
-        time = 0;
     }
 
     public override void Exit()
@@ -29,8 +27,6 @@ public class PlayerWarpState : PlayerGroundState
 
     public override void Update()
     {
-        time += Time.deltaTime;
-        //if (time >=1f)
         if (player.Animator.GetCurrentAnimatorStateInfo(0).IsName("Player_Enter") &&player.Animator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
         {
             if (warp)
