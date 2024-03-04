@@ -76,6 +76,7 @@ public class PlayerAirState : PlayerBaseState
             isHit = Physics.Raycast(ray, out hit, RayCastData.RayFromCameraDistance, targetLayer);
             if (isHit)
             {
+                // Tag비교 추가?
                 Vector3 topPosition = hit.collider.bounds.max;
                 float distanceToTop = topPosition.y - hit.point.y;
 

@@ -57,6 +57,7 @@ public class PlayerJumpState : PlayerAirState
 
         if (Physics.Raycast(ray, out hit, RayCastData.RayFromCameraDistance, targetLayer))
         {
+            // 여기도 가야하는 지점의 위치에 따라 값을 조정해야할듯?
             Vector3 modifier = Camera.main.transform.position - player.transform.position; // 카메라의 방향
             modifier = InitPlayerPosModifier(modifier); // 수정자 초기화
 
