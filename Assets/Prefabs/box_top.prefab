@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 1126535131869101806}
   - component: {fileID: 7156745266851158193}
   - component: {fileID: 6555613943962091522}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: box_top
-  m_TagString: Untagged
+  m_TagString: Climbable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

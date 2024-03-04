@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerJumpState : PlayerAirState
 {
-    
+    protected float delay;
     public PlayerJumpState(PlayerStateMachine playerStateMachine) : base(playerStateMachine) { }
 
     public override void Enter()
@@ -12,9 +12,9 @@ public class PlayerJumpState : PlayerAirState
         base.Enter();
 
         StartAnimation(animData.JumpParameterHash);
-
         // Jump 시작
         forceReceiver.Jump(player.GetJumpForce);
+        delay = 0;
     }
 
     public override void Update()
@@ -30,6 +30,8 @@ public class PlayerJumpState : PlayerAirState
 
     public override void PhysicsUpdate()
     {
+        delay += Time.fixedDeltaTime;
+
         if (player.isVisible)
             CheckOverHead();
 
@@ -45,6 +47,9 @@ public class PlayerJumpState : PlayerAirState
 
     void CheckOverHead()
     {
+        if (delay > 0.1f)
+            return;
+
         // 카메라에서 캐릭터의 상단 지점으로 레이캐스트를 해야함
         Vector3 targetPos = Camera.main.transform.position + (Vector3.up * RayCastData.UpPivot);
         Ray ray = new Ray(targetPos, Camera.main.transform.forward);
@@ -71,8 +76,9 @@ public class PlayerJumpState : PlayerAirState
                 newPos.z = absZ ? hit.point.z : newPos.z;
 
                 CheckSpaceAvailability(newPos + modifier, controller);
+                delay = 0;
+                frontCheck = false;
             }
-            frontCheck = false;
         }
         else
             frontCheck = true;
