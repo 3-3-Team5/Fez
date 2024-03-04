@@ -15,6 +15,7 @@ public class CemeraController : MonoBehaviour
 {
     [SerializeField] Transform target;
     Player player;
+    ForceReceiver forceReceiver;
 
     CinemachineBrain brain;
     CinemachineVirtualCamera[] vcams;
@@ -32,6 +33,7 @@ public class CemeraController : MonoBehaviour
         VCamsInit();
 
         player = target.parent.gameObject.GetComponent<Player>();
+        forceReceiver = player.GetComponent<ForceReceiver>();
 
         RayCastData.PlayerCameraPivotPosY = target.localPosition.y;
     }
@@ -98,6 +100,7 @@ public class CemeraController : MonoBehaviour
     {
         // 블렌딩이 시작 되었으니 PlayerInput 끄기
         isBlending = true;
+        forceReceiver.isStop = true;
         player.SetPlayerControlEnabled(false);
         //Debug.Log("Blending Start");
     }
@@ -106,6 +109,7 @@ public class CemeraController : MonoBehaviour
     {
         // 블렌딩이 완료 되었으니 PlayerInput 켜기
         isBlending = false;
+        forceReceiver.isStop = false;
         player.SetPlayerControlEnabled(true);
         //Debug.Log("Blending Completed");
     }

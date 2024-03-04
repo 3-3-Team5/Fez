@@ -9,16 +9,22 @@ public class ForceReceiver : MonoBehaviour
 
     public float verticalVelocity;
 
+    public bool isStop;
+
     public Vector3 Movement => Vector3.up * verticalVelocity;
 
     private void Awake()
     {
         player = GetComponent<Player>();
         controller = GetComponent<CharacterController>();
+        isStop = false;
     }
 
     private void Update()
     {
+        if (isStop)
+            return;
+
         if (controller.isGrounded && verticalVelocity < 0)
         {
             verticalVelocity = 0;

@@ -423,10 +423,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    - target: {fileID: 8486184041961204711, guid: ddd0f5297d78f884e94975cd83fb4906, type: 3}
-      propertyPath: <AnimationData>k__BackingField.DieParameterName
-      value: Die
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
