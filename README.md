@@ -5,7 +5,7 @@
 방향을 바꿔가며 올라갈 수 있는 길을 찾아 상자를 탐색해 모든 퍼즐을 모아 정상을 향하는 게임입니다.
 
 ## 사용 / 테스트 방법
-- Main Scene에서 Run
+- Start Scene에서 Run
 ### 조작법
 - 방향 이동 - Left => A / Right => D
 - 점프 - Space
