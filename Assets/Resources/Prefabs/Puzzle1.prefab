@@ -66,7 +66,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3a87526c257d3c84880d7141eb8ec82d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 54800f9d734b7c94fb9fc5c43e6487a6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3a87526c257d3c84880d7141eb8ec82d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 54800f9d734b7c94fb9fc5c43e6487a6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -272,9 +272,9 @@ GameObject:
   - component: {fileID: 7035536492491959935}
   - component: {fileID: 4639790745541584740}
   - component: {fileID: 7812182859860735934}
-  - component: {fileID: -1682264211534661325}
+  - component: {fileID: -8502819759118621717}
   m_Layer: 0
-  m_Name: Puzzle 2
+  m_Name: Puzzle1
   m_TagString: Puzzle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -367,7 +367,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-1682264211534661325
+--- !u!114 &-8502819759118621717
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -446,7 +446,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3a87526c257d3c84880d7141eb8ec82d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 54800f9d734b7c94fb9fc5c43e6487a6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -522,7 +522,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3a87526c257d3c84880d7141eb8ec82d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 54800f9d734b7c94fb9fc5c43e6487a6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -598,7 +598,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3a87526c257d3c84880d7141eb8ec82d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 54800f9d734b7c94fb9fc5c43e6487a6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -674,7 +674,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 3a87526c257d3c84880d7141eb8ec82d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 54800f9d734b7c94fb9fc5c43e6487a6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

@@ -42,6 +42,8 @@ public class Player : MonoBehaviour
     PlayerStateMachine stateMachine;
     public bool isVisible;
 
+    public Inventory inventory = new Inventory(4);
+
     private void Awake()
     {
         AnimationData.Initialize();
@@ -110,6 +112,16 @@ public class Player : MonoBehaviour
         //Gizmos.DrawRay(front, Camera.main.transform.forward * RayCastData.RayFromCameraDistance);
 
         //Gizmos.DrawRay(transform.forward, transform.forward * 10f);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Puzzle"))
+        {
+            inventory.AddItem(other.GetComponent<ItemObject>().itemData);
+
+            other.gameObject.SetActive(false);
+        }
     }
 
     private void OnControllerColliderHit(ControllerColliderHit hit) //미끄?���? 구현?�� ?��?��?�� 메서?��

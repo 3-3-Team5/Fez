@@ -11,6 +11,11 @@ public class ItemBox : MonoBehaviour
     private float dropHeight = 1f;
     private float dropDuration = 1f;
 
+    private void Start()
+    {
+        
+    }
+
     private void OnTriggerStay(Collider other)
     {
         if (other.CompareTag("Player"))

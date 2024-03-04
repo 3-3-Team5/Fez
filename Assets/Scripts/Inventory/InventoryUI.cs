@@ -10,7 +10,7 @@ using UnityEngine.UI;
 public class InventoryUI : MonoBehaviour
 {
     [SerializeField]
-    private Player2 player;
+    private Player player;
     private Inventory inventory;
     [SerializeField]
     private GameObject itemSlots;
