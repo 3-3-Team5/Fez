@@ -9,8 +9,7 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioSource FXaudioSource;
     [SerializeField] private AudioSource BGMaudioSource;
 
-    [SerializeField] private Button _Openbutton;
-    [SerializeField] private Button _Closebutton;
+     public Button Openbutton;    
     [SerializeField] private Slider BGMslider;
     [SerializeField] private Slider FXslider;
     [SerializeField] private GameObject setUI;

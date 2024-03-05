@@ -22,6 +22,7 @@ public class StartScene : MonoBehaviour
             {
                 SceneManager.LoadScene("Scenes/Player");
                 _audioManager.PlayBGM();
+                _audioManager.Openbutton.gameObject.SetActive(true);
                 Destroy(this);
             }            
         }
