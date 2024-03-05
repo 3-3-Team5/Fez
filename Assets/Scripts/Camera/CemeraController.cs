@@ -73,6 +73,7 @@ public class CemeraController : MonoBehaviour
 
     public void CameraMove(int idx)
     {
+       player.audioManager.PlayCameraRotate(idx);
         int temp = currentCameraIndex; // 카메라 우선도는 한번에 변경 하는게 나을것 같아서 일단 현재 인덱스 저장
         currentCameraIndex += idx;
 

@@ -14,6 +14,7 @@ public class PlayerWarpState : PlayerGroundState
     public override void Enter()
     {
         base.Enter();
+        player.audioManager.PlayDoorFX(0);
         StartAnimation(player.AnimationData.DoorEnterParameterHash);
         warp = true;
     }
@@ -35,6 +36,7 @@ public class PlayerWarpState : PlayerGroundState
                 player.gameObject.transform.position = player.warpPos;
                 warp = false;
                 StopAnimation(player.AnimationData.DoorEnterParameterHash);
+                player.audioManager.PlayDoorFX(1);
                 StartAnimation(player.AnimationData.DoorExitParameterHash);
             }
         }

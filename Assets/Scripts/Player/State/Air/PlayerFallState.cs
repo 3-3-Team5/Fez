@@ -10,7 +10,7 @@ public class PlayerFallState : PlayerAirState
     public override void Enter()
     {
         base.Enter();
-
+        player.audioManager.PlayFallFX();
         StartAnimation(animData.fallParameterHash);
     }
 
@@ -32,7 +32,6 @@ public class PlayerFallState : PlayerAirState
     public override void Exit()
     {
         base.Exit();
-
         StopAnimation(animData.fallParameterHash);
     }
 

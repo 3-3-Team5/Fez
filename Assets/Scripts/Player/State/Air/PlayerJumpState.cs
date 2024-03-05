@@ -11,6 +11,7 @@ public class PlayerJumpState : PlayerAirState
     {
         base.Enter();
 
+        player.audioManager.PlayJump();
         StartAnimation(animData.JumpParameterHash);
         // Jump Ω√¿€
         forceReceiver.Jump(player.GetJumpForce);

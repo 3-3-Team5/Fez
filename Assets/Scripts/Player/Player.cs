@@ -69,6 +69,8 @@ public class Player : MonoBehaviour
     public Action OnDeath;
     public SaveTransform saveTransform;
 
+    public AudioManager audioManager;
+
     private void Awake()
     {
         AnimationData.Initialize();
@@ -87,7 +89,7 @@ public class Player : MonoBehaviour
     {
         stateMachine.ChangeState(stateMachine.IdleState);
         mainCamera = Camera.main;
-
+        audioManager = GameObject.Find("AudioManager").GetComponent<AudioManager>();
         OnDeath += ReSpawn;
     }
 
