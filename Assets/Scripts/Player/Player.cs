@@ -36,7 +36,7 @@ public class Player : MonoBehaviour
     [SerializeField] public CharacterSO stats; // baseStat
 
     [Header("Modifier")]
-    public float moveSpeedModifier = 1f; // ���ȿ� ����ġ�� ���ϴ� ���ȵ��� �������� �Ǹ� ���� Ŭ������ �����ϴ°� ������
+    public float moveSpeedModifier = 1f; // 스탯에 가중치를 더하는 스탯들은 많아지게 되면 따로 클래스로 관리하는게 좋을듯
     public float jumpForceModifier = 1f;
     public float GetMoveSpeed => stats.baseStats.MovementSpeed * moveSpeedModifier;
     public float GetJumpForce => stats.baseStats.jumpForce * jumpForceModifier;
@@ -198,7 +198,6 @@ public class Player : MonoBehaviour
         Vector3 center = Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY);
         Gizmos.DrawRay(center, transform.position - center);
 
-        // ����� ������ �׳� �������� �ƴ� �� ��ǲ�� ���������ؼ� �׷�
         //Gizmos.DrawRay(front, Camera.main.transform.forward * RayCastData.RayFromCameraDistance);
 
         //Gizmos.DrawRay(transform.forward, transform.forward * 10f);

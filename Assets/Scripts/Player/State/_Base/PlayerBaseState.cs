@@ -33,12 +33,12 @@ public class PlayerBaseState : IState
 
     public virtual void Enter()
     {
-        AddInputActionsCallbacks(); // ��ǲ ó���� ���� �̺�Ʈ �߰�
+        AddInputActionsCallbacks(); // 인풋 처리를 위한 이벤트 추가
     }
 
     public virtual void Exit()
     {
-        RemoveInputActionsCallbacks(); // ���°� ����Ǵ� ���� ��ϵǾ� �ִ� ������ �̺�Ʈ ����
+        RemoveInputActionsCallbacks(); // 상태가 변경되니 현재 등록되어 있는 상태의 이벤트 제거
     }
 
     public virtual void HandleInput()
@@ -85,12 +85,10 @@ public class PlayerBaseState : IState
     {
         float movementSpeed = player.GetMoveSpeed;
 
-        movementDirection = player.mainCamera.transform.right * movementDirection.x; // ī�޶� �������� �̵� ������ ����
+        movementDirection = player.mainCamera.transform.right * movementDirection.x; // 카메라 기준으로 이동 방향을 설정
 
-        // ��/�� �̵� - movementDirection , ��/��(����, �߷�) - ForceReceiver.Movement
+        // 좌/우 이동 - movementDirection , 상/하(점프, 중력) - ForceReceiver.Movement
         Vector3 finalMovement = movementDirection * movementSpeed + player.ForceReceiver.Movement + player.knockbackDir;
-        // Z ������ �̵��� �� 0.0000007213769 ~ -0.0000008539862 ���� �߰�
-        // Ư�� ������ ������ �׳� 0���� ó��
         if (player.slideDir != Vector3.zero && player.isslipped && Mathf.Approximately(finalMovement.magnitude, 0f) &&
             !isSliding)
             // 이동이 종료되고, 미끄러운 상태라면
@@ -110,8 +108,8 @@ public class PlayerBaseState : IState
             }
 
 
-            // Z ������ �̵��� �� 0.0000007213769 ~ -0.0000008539862 ���� �߰�
-            // Ư�� ������ ������ �׳� 0���� ó��
+            // Z 축으로 이동할 때 0.0000007213769 ~ -0.0000008539862 오차 발견
+            // 특정 수보다 작으면 그냥 0으로 처리
             if (Mathf.Abs(finalMovement.x) < 1e-6f) // 1e-6f = 0.000001
                 finalMovement.x = 0;
             if (Mathf.Abs(finalMovement.z) < 1e-6f) // 1e-6f = 0.000001
@@ -129,28 +127,28 @@ public class PlayerBaseState : IState
     private void LookRotation(Vector3 movementDirection)
     {
         Transform cameraTransform = player.mainCamera.transform;
-        // ī�޶��� ��ġ�� �������� ĳ���Ͱ� �ٶ� ���� ���
+        // 카메라의 위치를 기준으로 캐릭터가 바라볼 방향 계산
         Vector3 direction = cameraTransform.position - player.transform.position;
-        direction.y = 0; // ���� �ٶ󺸰� �ϱ� ���ؼ�
+        direction.y = 0; // 수평만 바라보게 하기 위해서
 
-        // ĳ���Ͱ� ī�޶� ������ �ٶ󺸵��� ȸ��
+        // 캐릭터가 카메라 방향을 바라보도록 회전
         Quaternion lookRotation = Quaternion.LookRotation(direction);
         player.transform.rotation = lookRotation;
 
-        // ĳ������ ��/�� �ٶ󺸴� ���� ����
-        if (movementDirection.x < 0) // �������� �������� �׳� ���α� ���ؼ� 0�� ���� ó������ ����.
+        // 캐릭터의 좌/우 바라보는 방향 설정
+        if (movementDirection.x < 0) // 움직임이 없을떄는 그냥 냅두기 위해서 0인 경우는 처리하지 않음.
         {
-            // �������� �̵��ϰ� �ִ� ���
+            // 좌측으로 이동하고 있는 경우
             player.transform.localScale = new Vector3(-1, 1, 1);
         }
         else if (movementDirection.x > 0)
         {
-            // �������� �̵��ϰ� �ִ� ���
+            // 우측으로 이동하고 있는 경우
             player.transform.localScale = new Vector3(1, 1, 1);
         }
     }
 
-    private void ReadMovementInput() // PlayerInput.Move �� �ִ� ���� �о��
+    private void ReadMovementInput() // PlayerInput.Move 에 있는 값을 읽어옴
     {
         stateMachine.MovementInput = input.PlayerActions.Move.ReadValue<Vector2>();
     }
@@ -178,16 +176,16 @@ public class PlayerBaseState : IState
 
     void CheckVisible()
     {
-        // ī�޶󿡼� ĳ������ �ϴ� �������� ����ĳ��Ʈ�� �ؾ��� : ī�޶� �ǹ��� ���� + �� �Ʒ� = RayCastData.DownPivot
+        // 카메라에서 캐릭터의 하단 지점으로 레이캐스트를 해야함 : 카메라 피벗의 높이 + 발 아래 = RayCastData.DownPivot
         Vector3 cameraPos = Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY);
         Ray ray = new Ray(cameraPos, player.transform.position - cameraPos);
         RaycastHit hit;
 
-        // ����ĳ��Ʈ ����
+        // 레이캐스트 수행
         LayerMask targetLayer = LayerData.Ground | LayerData.Wall;
         if (Physics.Raycast(ray, out hit, RayCastData.CameraToPlayerDis, targetLayer))
         {
-            // ���̳� ���� Player�� �տ� �ִٸ�.
+            // 땅이나 벽이 Player의 앞에 있다면.
             player.isVisible = false;
         }
         else
@@ -196,19 +194,19 @@ public class PlayerBaseState : IState
 
     protected Vector3 InitPlayerPosModifier(Vector3 modifier)
     {
-        modifier.y = 0f; //y���� ������ �������.
+        modifier.y = 0f; // y축은 변경이 없어야함.
         modifier.Normalize();
-        modifier = modifier * (controller.radius + 0.3f); // ���� * �÷��̾��� �ݶ��̴��� ������ ��ŭ ������ ���ܿ�
+        modifier = modifier * (controller.radius + 0.3f); // 방향 * 플레이어의 콜라이더의 반지름 만큼 앞으로 땡겨옴
 
         return modifier;
     }
 
     protected void CheckFront()
     {
-        // ī�޶󿡼� ĳ������ �������� ����ĳ��Ʈ
+        // 카메라에서 캐릭터의 정면으로 레이캐스트
         Vector3 rayStartPos =
-            Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY); // �߽���
-        // �÷��̾��� ����������κ��� ���� ��ġ��ŭ�� �տ� �ִ� ����
+            Camera.main.transform.position + (Vector3.down * RayCastData.PlayerCameraPivotPosY); // 중심점
+        //플레이어의 진행방향으로부터 일정 수치만큼의 앞에 있는 지점
         Vector3 PlayerFornt = (Camera.main.transform.right * player.transform.localScale.x) *
                               RayCastData.PlayerFrontPivot;
         rayStartPos += PlayerFornt; // Player�� �������� ���� ����
@@ -216,20 +214,20 @@ public class PlayerBaseState : IState
         Ray ray = new Ray(rayStartPos, Camera.main.transform.forward);
         RaycastHit hit;
 
-        // ����ĳ��Ʈ ����
+        // 레이캐스트 수행
         LayerMask targetLayer = LayerData.Ground | LayerData.Wall;
         if (Physics.Raycast(ray, out hit, RayCastData.RayFromCameraDistance, targetLayer))
         {
-            hit.point -= PlayerFornt; // ���� �浹������ �÷��̾��� ��ġ���� ��¦ �����̴ϱ� �����ظ�ŭ �ٽ� �M
-            Vector3 modifier = Camera.main.transform.position - player.transform.position; // ī�޶��� ����
-            modifier = InitPlayerPosModifier(modifier); // ������ �ʱ�ȭ
+            hit.point -= PlayerFornt; // 실제 충돌지점은 플레이어의 위치보다 살짝 앞쪽이니까 더해준만큼 다시 뻄
+            Vector3 modifier = Camera.main.transform.position - player.transform.position; // 카메라의 방향
+            modifier = InitPlayerPosModifier(modifier); // 수정자 초기화
 
-            // x,z ���� ���� ��ġ �̻� ���̳��ٸ� ������Ѿ���
+            // x,z 축이 일정 수치 이상 차이난다면 변경시켜야함
             Vector3 newPos = player.transform.position;
             bool absX = Mathf.Abs(player.transform.position.x - hit.point.x) > controller.radius + ModifierCollection.RadiusModifier;
             bool absZ = Mathf.Abs(player.transform.position.z - hit.point.z) > controller.radius + ModifierCollection.RadiusModifier;
 
-            // x or z ���� ���氪�� radius���� ũ�ٸ� ĳ������ ��ġ ����
+            //  x or z 축의 변경값이 radius보다 크다면 캐릭터의 위치 변경
             if (absX || absZ)
             {
                 newPos.x = absX ? hit.point.x : newPos.x;
@@ -240,7 +238,7 @@ public class PlayerBaseState : IState
         }
     }
 
-    // �̵� �� ������ Player�� ��� �� �� �ִ��� Ȯ��
+    // 이동 할 공간이 Player가 들어 갈 수 있는지 확인
     public bool CheckSpaceAvailability(Vector3 targetPosition, CharacterController controller)
     {
         Vector3 colliderSize = new Vector3(controller.radius * 2, controller.height, controller.radius * 2);
@@ -250,12 +248,13 @@ public class PlayerBaseState : IState
             Quaternion.identity, targetLayer);
         if (hitColliders.Length > 0)
         {
+            // 공간에 다른 콜라이더가 있음
             //Debug.Log("Can't Move");
             return false;
         }
         else
         {
-            // ������ ��� ����
+            // 공간이 비어 있음
             //Debug.Log("Can Move");
             player.transform.position = targetPosition;
             return true;
